@@ -1,0 +1,10 @@
+../source/huffman.c:23:13:new_node	32	static
+../source/huffman.c:36:13:qinsert	24	static
+../source/huffman.c:54:13:qremove	24	static
+../source/huffman.c:74:13:build_code	24	static
+../source/huffman.c:95:13:encode	16	static
+../source/huffman.c:103:13:decode	24	static
+../source/huffman.c:123:13:dump_code	16	static
+../source/huffman.c:135:6:import_huffman_table	552	static
+../source/huffman.c:177:6:encode_message	16	static
+../source/huffman.c:182:6:decode_message	16	static

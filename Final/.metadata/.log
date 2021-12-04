@@ -1,0 +1,12 @@
+!SESSION 2021-11-05 12:13:29.834 -----------------------------------------------
+eclipse.buildId=unknown
+java.version=11.0.10
+java.vendor=AdoptOpenJDK
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=en_CA
+Command-line arguments:  -os linux -ws gtk -arch x86_64
+
+!ENTRY com.nxp.mcuxpresso.core.datamodels 1 0 2021-11-05 12:13:52.454
+!MESSAGE Recreating part support. No part support available.
+
+!ENTRY com.nxp.mcuxpresso.core.datamodels 1 0 2021-11-05 12:13:55.067
+!MESSAGE The device 'MKL25Z128xxx4' (version='1.0.0') from SDK 'SDK_2.x_FRDM-KL25Z' (version='2.2.0', build='') will be installed.

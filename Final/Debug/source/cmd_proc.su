@@ -1,0 +1,2 @@
+../source/cmd_proc.c:51:13:process_cmd	64	static
+../source/cmd_proc.c:98:6:command_processor	48	static
