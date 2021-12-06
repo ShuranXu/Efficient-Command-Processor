@@ -213,10 +213,8 @@ void decode_message(const char *s, char *buf)
 //LSB    MSB
 //0101000 
 
-static void test1()
+static void test1(const char *str)
 {
-    // const char *str = "help\r";
-	const char *str = "p";
     char buf[256];
     char characters[256];
     // char buf[8];
@@ -322,28 +320,7 @@ static void test4()
 
 int main(void)
 {
-	test4();
+	test1("dump 0xa0 0x64\n");
 	return 0;
 }
 #endif
-
-
-// static void decode(const char *s, node t)
-// {
-// 	node n = t;
-// 	while (*s) {
-// 		if (*s++ == '0') 
-//             n = n->left;
-// 		else 
-//             n = n->right;
- 
-// 		if (n->c) {
-//             putchar(n->c);
-//             n = t;
-//         }
-// 	}
- 
-// 	putchar('\n');
-// 	if (t != n) 
-//         printf("garbage input\n");
-// }

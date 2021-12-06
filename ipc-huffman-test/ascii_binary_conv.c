@@ -54,14 +54,14 @@ int ascii_to_bytes(char *buf, int buf_size, uint8_t *bytes, int bytes_size)
 
     while(residue >= 8){
         ascii_to_byte(bufp, 8, bytesp);
-        printf("data[%d] = 0x%x\n", bytesp - bytes, *bytesp);
+        // printf("data[%d] = 0x%x\n", bytesp - bytes, *bytesp);
         residue -= 8;
         bufp += 8;
         bytesp += 1;
     }
     if(residue > 0){
         ascii_to_byte(bufp,residue, bytesp);
-        printf("data[%d] = 0x%x\n", bytesp - bytes, *bytesp);
+        // printf("data[%d] = 0x%x\n", bytesp - bytes, *bytesp);
     }
 
     return bytesp - bytes;
@@ -110,14 +110,14 @@ void test_bytes_to_ascii()
 {
     uint8_t bytes[4] = {0x11, 0x22, 0x33, 0x44};
     printf("bytes to be decoded:\n");
-    for(int i=0;i<4;i++){
+    for(int i=0;i<sizeof(bytes);i++){
         printf("0x%x\t", bytes[i]);
     }
     printf("\r\n");
 
     char buf[33];
-    memset(buf,0,33);
-    bytes_to_ascii(buf, 33, bytes, 4);
+    memset(buf,0,sizeof(buf));
+    bytes_to_ascii(buf, sizeof(buf), bytes, sizeof(bytes));
 }
 
 /* The LSM bit is the rightmost character and the MSB bit 
@@ -129,7 +129,7 @@ void test_ascii_to_byte()
     char buf[] = "10101011";
     // char buf[] = "0101000";
     uint8_t byte;
-    ascii_to_byte(buf, &byte);
+    ascii_to_byte(buf, strlen(buf), &byte);
 }
 
 void test_ascii_to_bytes()
@@ -137,12 +137,20 @@ void test_ascii_to_bytes()
     //0xab0f8844
     char buf[] = "10101011000011111000100001000100";
     uint8_t bytes[4];
-    ascii_to_bytes(buf, bytes, 4);
+    ascii_to_bytes(buf, strlen(buf), bytes, sizeof(bytes));
+}
+
+void test_ascii_to_bytes2()
+{
+    //0xab0f8844
+    char buf[] = "01000101111101111011000010101100011000101001110110001010110001100010101011010101110011000";
+    uint8_t bytes[4];
+    ascii_to_bytes(buf, strlen(buf), bytes, sizeof(bytes));
 }
 
 int main(int argc, char *argv[])
 {
-    test_byte_to_ascii();
+    test_ascii_to_bytes2();
 }
 
 #endif

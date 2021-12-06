@@ -11,6 +11,102 @@
 #include "huffman.h"
 #include "ascii_binary_conv.h"
 
+/*
+
+original: ?
+encoded: 111011
+length of raw bytes = 6
+
+original: .
+encoded: 100001
+length of raw bytes = 6
+
+*/
+
+#define BYTE_MODE
+// #define STREAM_MODE
+
+#ifdef BYTE_MODE
+
+#define QUESTION_MARK_BYTE      (0xec)
+#define PERIOD_MARK_BYTE        (0x84)
+
+/* The following main code sends one byte at a time. */
+int main()
+{
+    int fd;
+
+    // FIFO file path
+    char *myfifo = "/tmp/myfifo";
+
+    import_huffman_table();
+
+    // Creating the named file(FIFO)
+    // mkfifo(<pathname>, <permission>)
+    mkfifo(myfifo, 0666);
+
+    uint8_t cmd[32];
+    uint8_t wbuf[128];
+    uint8_t data[32];
+    int data_written;
+
+    memset(cmd, 0, sizeof(cmd));
+    memset(wbuf, 0, sizeof(wbuf));
+    memset(data, 0, sizeof(data));
+
+    while (1)
+    {
+        // Open FIFO for write only
+        fd = open(myfifo, O_WRONLY);
+
+        // Take an input cmd2ing from user.
+        // 32 is maximum length
+        printf("\r\nUser Input: ");
+        fgets(cmd, 32, stdin);
+        printf("%d bytes are provided by the user\n", strlen(cmd));
+
+        /* encode the command using the huffman coding */
+        encode_message((const char *)cmd, wbuf); 
+        printf("wbuf = %s, %d bytes\n", wbuf, strlen(wbuf));
+        /* convert the ascii code to raw bytes */
+        data_written = ascii_to_bytes(wbuf, strlen(wbuf), \
+        data, sizeof(data));
+        // append QUESTION_MARK_BYTE to data
+        data[++data_written] = QUESTION_MARK_BYTE;
+
+        data_written++;
+
+        printf("%d bytes are written to data\n",data_written);
+
+        // Write the input cmd on FIFO
+        // and close it
+        for(int i=0;i<data_written;i++){
+            printf("data[%d] = 0x%x\n",i,data[i]);
+            write(fd, &data[i], 1);
+        }
+        close(fd);
+        //check if need to exit
+        if(strstr(cmd,"quit")){
+            printf("Exit program\n");
+            return 0;
+        }
+      
+        // clear data
+        memset(data, 0, sizeof(data));
+        memset(wbuf, 0, sizeof(wbuf));
+        memset(cmd, 0, sizeof(cmd));
+    }
+    return 0;
+}
+
+#endif 
+
+#ifdef STREAM_MODE
+
+/* The following main code encodes and 
+ * sends the entire data at once.
+ */
+
 int main()
 {
     int fd;
@@ -24,12 +120,12 @@ int main()
     // mkfifo(<pathname>, <permission>)
     mkfifo(myfifo, 0666);
 
-    char arr[32];
+    char cmd[32];
     uint8_t wbuf[128];
     uint8_t data[64];
     int data_written;
 
-    memset(arr, 0, sizeof(arr));
+    memset(cmd, 0, sizeof(cmd));
     memset(wbuf, 0, sizeof(wbuf));
     memset(data, 0, sizeof(data));
 
@@ -37,36 +133,38 @@ int main()
 
     while (1)
     {
-
         // Open FIFO for write only
         fd = open(myfifo, O_WRONLY);
 
-        // Take an input arr2ing from user.
+        // Take an input cmd2ing from user.
         // 80 is maximum length
         printf("\r\nUser Input: ");
-        fgets(arr, 80, stdin);
-        printf("user input is %s\n", arr);
+        fgets(cmd, 80, stdin);
+        printf("user input is %s\n", cmd);
 
         /* encode the command using the huffman coding */
-        encode_message((const char *)arr, wbuf); 
+        encode_message((const char *)cmd, wbuf); 
         // printf("wbuf = %s\n", wbuf);
         /* convert the ascii code to raw bytes */
         data_written = ascii_to_bytes(wbuf, strlen(wbuf), \
         data, sizeof(data));
 
-        // Write the input arr on FIFO
+        // Write the input cmd on FIFO
         // and close it
         write(fd, data, data_written);
         close(fd);
         //check if need to exit
-        if(strstr(arr,"quit")){
+        if(strstr(cmd,"quit")){
             printf("Exit program\n");
             return 0;
         }
       
         // clear data
         memset(data, 0, sizeof(data));
-        memset(arr, 0, sizeof(arr));
+        memset(cmd, 0, sizeof(cmd));
     }
     return 0;
 }
+
+#endif
+
