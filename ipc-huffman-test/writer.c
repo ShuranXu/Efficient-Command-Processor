@@ -1,6 +1,6 @@
 // C program to implement one side of FIFO
 // This side writes first, then reads
-// Link: https://www.geeksforgeeks.org/named-pipe-fifo-example-c-program/
+// Reference Link: https://www.geeksforgeeks.org/named-pipe-fifo-example-c-program/
 
 #include <stdio.h>
 #include <string.h>
