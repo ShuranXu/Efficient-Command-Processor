@@ -46,13 +46,20 @@ int main()
     mkfifo(myfifo, 0666);
 
     uint8_t cmd[32];
+    uint8_t reply[32];
     uint8_t wbuf[128];
+    uint8_t rbuf[128];
     uint8_t data[32];
     int data_written;
+    uint8_t c;
+    int read_len;
+    int idx = 0;
 
     memset(cmd, 0, sizeof(cmd));
     memset(wbuf, 0, sizeof(wbuf));
     memset(data, 0, sizeof(data));
+    memset(rbuf, 0, sizeof(rbuf));
+    memset(reply, 0, sizeof(reply));
 
     while (1)
     {
@@ -79,22 +86,63 @@ int main()
         printf("%d bytes are written to data\n",data_written);
 
         // Write the input cmd on FIFO
-        // and close it
         for(int i=0;i<data_written;i++){
             printf("data[%d] = 0x%x\n",i,data[i]);
             write(fd, &data[i], 1);
         }
+
         close(fd);
-        //check if need to exit
+
+         //check if need to exit
         if(strstr(cmd,"quit")){
             printf("Exit program\n");
+            
             return 0;
         }
-      
+
+        // Open FIFO for read only
+        fd = open(myfifo,O_RDONLY);
+
+        /* now read the response from the receiver */
+        /* check if the ending byte is received */
+        do{
+            read_len = read(fd, &c, 1);
+            if(c == PERIOD_MARK_BYTE)
+                break;
+
+            reply[idx++] = c;
+
+            if(idx >= sizeof(reply)){
+                printf("Failed attempts so far, reset the buffer\n");
+                memset(reply,0,sizeof(reply));
+                idx = 0;
+            }
+        }while(1);
+
+        //print reply
+        for(int i=0;i< idx;i++){
+            printf("reply[%d] = 0x%x\n", i, reply[i]);
+        }
+
+        /* convert raw bytes to ASCII stream */
+        bytes_to_ascii(rbuf, sizeof(rbuf), reply, idx);
+
+        printf("rbuf = %s, %d bytes\n", rbuf, strlen(rbuf));
+
+        /* decode the ASCII stream */
+        decode_message(rbuf, data);
+        // Print the read string and close
+        printf("User2 Reply: %s\n", data);
+
+        close(fd);
+       
         // clear data
+        idx = 0;
         memset(data, 0, sizeof(data));
         memset(wbuf, 0, sizeof(wbuf));
         memset(cmd, 0, sizeof(cmd));
+        memset(reply, 0, sizeof(reply));
+        memset(rbuf, 0, sizeof(rbuf));
     }
     return 0;
 }
