@@ -1,7 +1,7 @@
 #ifndef __HUFFMAN_CODE_H__
 #define __HUFFMAN_CODE_H__
 
-#define QUESTION_MARK_BYTE      		(0xec)
+#define QUESTION_MARK_BYTE      		(0xe4)
 #define PERIOD_MARK_BYTE        		(0x84)
 #define HUFF_PRINT 						huffman_print
 

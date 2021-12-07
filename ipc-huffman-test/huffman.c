@@ -88,7 +88,7 @@ int encode_message(const char *s, char *buf, int buf_size)
     return 0;
 }
 
-// #define TEST
+#define TEST
 
 #ifdef TEST
 
@@ -110,8 +110,8 @@ void test1()
 
 void test2()
 {
-    const char *rbuf = "01100110001100000110000001100000";
-    uint8_t decodestr[64];
+    const char *rbuf = "001000100110000101100000001010011100100100010000010110001010100111100111100011111110100011010000110001110110100100111001101000001010000110001110110100100011000100110000";
+    uint8_t decodestr[128];
     // decode_message(rbuf, strlen(rbuf), decodestr);
     decode_message(rbuf, decodestr);
     printf("decoded str : %s\n", decodestr);

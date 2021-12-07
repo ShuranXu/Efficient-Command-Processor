@@ -112,6 +112,26 @@ void test1()
     printf("decoded str : %s\n", decodestr);
 }
 
+void test4()
+{
+	printf("Test4:\n");
+    const char *str = "dump 0xa0 0x40";
+	printf("str length = %d\n", strlen(str));
+    char buff[256];
+    char decodestr[32];
+	memset(decodestr,0,sizeof(decodestr));
+	memset(buff,0,sizeof(buff));
+
+    if(encode_message(str,buff, sizeof(buff)) < 0){
+        return -1;
+    }
+    printf("original str: %s\n", str);
+    printf("encoded str: %s - %d bytes\n",buff, strlen(buff));
+    // decode_message(buff, strlen(buff),decodestr);
+    decode_message(buff, decodestr);
+    printf("decoded str : %s\n", decodestr);
+}
+
 void test2()
 {
 	printf("Test2:\n");
@@ -137,15 +157,13 @@ void test3()
 }
 
 
-
-
 int main(void)
 {
-	
-	test1();
-	test3();
+	test4();
 
 	return 0;
 }
 
 #endif 
+
+

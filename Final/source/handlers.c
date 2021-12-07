@@ -81,11 +81,11 @@ void hex_dump(int argc,char *argv[])
 		sscanf(argv[2], "%d", &nbytes);
 
 	if(nbytes < 0 || nbytes > 640){
-		printf("\r\nError: %d is invalid length, length should be in [0,640]", nbytes);
 		return;
 	}
 
 	char str[64];
+	memset(str,0,sizeof(str));
 
     /* determine the numbers of lines needed */
     int lines = nbytes >> 4;
@@ -114,7 +114,7 @@ void hex_dump(int argc,char *argv[])
 
     while(loc_iter < nbytes) {
 
-        if(!MODULO(loc_iter, 16)) {
+        if(!MODULO(loc_iter, 8)) {
             /* setup the first column for the current line */
             unsigned_to_hexstr(str, 9, loc + loc_iter, 1);
             str_iter += 9;
@@ -126,15 +126,85 @@ void hex_dump(int argc,char *argv[])
         unsigned_to_hexstr(str+str_iter, 2, ascii_value, 0);
         str_iter += 2;
 
-        if(!MODULO((loc_iter + 1), 16)) {
-            printf("\r\n%s",str);
+        if(!MODULO((loc_iter + 1), 8)) {
+        	HUFF_PRINT("\r\n");
+        	HUFF_PRINT(str);
             memset(str,0,sizeof(str));
             str_iter = 0;
         }
         loc_iter++;
     }
+    HUFF_PRINT("END");
     return;
 }
+
+//void hex_dump(int argc,char *argv[])
+//{
+//	uint8_t loc = (uint8_t)strtol(argv[1], NULL, 16);
+//	int nbytes;
+//
+//	if((argv[2][0] == '0') && (argv[2][1] == 'x'))
+//		sscanf(argv[2], "%x", &nbytes);
+//	else
+//		sscanf(argv[2], "%d", &nbytes);
+//
+//	if(nbytes < 0 || nbytes > 640){
+//		printf("\r\nError: %d is invalid length, length should be in [0,640]", nbytes);
+//		return;
+//	}
+//
+//	char str[64];
+//
+//    /* determine the numbers of lines needed */
+//    int lines = nbytes >> 4;
+//    lines += (MODULO(nbytes,4) > 0) ? 1 : 0;
+//
+//    /**
+//     * @brief Calculate the total bytes needed from str
+//     * based on nbytes parameter:
+//     *
+//     * Regarding the column number, for each line we need:
+//     * 1 + 6 = 7,
+//     * where 1 byte is for newline character and 6
+//     * bytes are for the hex number representing the
+//     * column number.
+//     *
+//     * For each byte we need 3 bytes from str:
+//     * 1 byte is for space character and 2 bytes are for
+//     * hex representation of a ASCII value.
+//     *
+//     * 1 byte for the '\0' character for str
+//     */
+//
+//    int loc_iter = 0;
+//    int str_iter = 0;
+//    uint8_t ascii_value;
+//
+//    while(loc_iter < nbytes) {
+//
+//        if(!MODULO(loc_iter, 16)) {
+//            /* setup the first column for the current line */
+//            unsigned_to_hexstr(str, 9, loc + loc_iter, 1);
+//            str_iter += 9;
+//            str[str_iter++] = ' '; //ASCII space
+//        }
+//
+//        str[str_iter++] = ' '; //ASCII space
+//        ascii_value = (uint8_t)(*((char *)loc + loc_iter));
+//        unsigned_to_hexstr(str+str_iter, 2, ascii_value, 0);
+//        str_iter += 2;
+//
+//        if(!MODULO((loc_iter + 1), 16)) {
+////        	printf("\r\n%s",str);
+//        	HUFF_PRINT(str);
+//            memset(str,0,sizeof(str));
+//            str_iter = 0;
+//        }
+//        loc_iter++;
+//    }
+//    HUFF_PRINT("END");
+//    return;
+//}
 
 /**
  * @brief print out the author name.
@@ -142,6 +212,7 @@ void hex_dump(int argc,char *argv[])
 void handle_author()
 {
 	HUFF_PRINT("\r\nShuran Xu");
+	HUFF_PRINT("END");
 }
 
 /**
@@ -150,11 +221,11 @@ void handle_author()
 
 void handle_help()
 {
-	HUFF_PRINT("\r\nUsage: command [arg1] [arg2]");
-//	HUFF_PRINT("\r\n Author       : Print the author name");
-//	HUFF_PRINT("\r\n Dump         : Print a hexdump of the memory requested");
-//	HUFF_PRINT("\r\n Info         : Print the build information of the program");
-//	HUFF_PRINT("\r\n Help         : Print the help message");
+	HUFF_PRINT("\r\nUsage : command [arg1] [arg2]");
+	HUFF_PRINT("\r\nAuthor: Print the author name");
+	HUFF_PRINT("\r\nDump  : Print hexdump of the memory requested");
+	HUFF_PRINT("\r\nHelp  : Print the help message");
+	HUFF_PRINT("END");
 }
 
 

@@ -14,8 +14,8 @@
 /*
 
 original: ?
-encoded: 111011
-length of raw bytes = 6
+encoded: 111001 --> 0xe4
+encoded: 111011 --> 0xec --> no longer used
 
 original: .
 encoded: 100001
@@ -30,7 +30,7 @@ length of raw bytes = 6
 
 #ifdef LOOKUP_MODE
 
-#define QUESTION_MARK_BYTE      (0xec)
+#define QUESTION_MARK_BYTE      (0xe4)
 #define PERIOD_MARK_BYTE        (0x84)
 
 /* The following main code sends one byte at a time. */
