@@ -1,10 +1,14 @@
 #ifndef __HUFFMAN_CODE_H__
 #define __HUFFMAN_CODE_H__
 
-void import_huffman_table();
+#define QUESTION_MARK_BYTE      		(0xec)
+#define PERIOD_MARK_BYTE        		(0x84)
+#define HUFF_PRINT 						huffman_print
 
-void encode_message(const char *s, char *out);
+int encode_message(const char *s, char *buf, int buf_size);
 
-void decode_message(const char *s);
+void decode_message(const char *s, char *buf);
+
+void huffman_print(const char *str);
 
 #endif /* __HUFFMAN_CODE_H__ */

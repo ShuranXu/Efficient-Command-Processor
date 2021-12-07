@@ -14,6 +14,9 @@
 #include <string.h>
 #include <stdbool.h>
 #include "handlers.h"
+#include "huffman.h"
+#include "common.h"
+#include "ascii_binary_conv.h"
 
 /* Define the maximum length of the local command buffer and the
  * local command argument array*/
@@ -35,7 +38,6 @@ static const command_table_t commands[] = {
 		//name 			handler 		help_string
 		{"author", 		handle_author, 	"Print the author's name"},
 		{"dump", 		hex_dump, 		"Print a hexdump of the memory requested, with up to 16 bytes per line of output"},
-		{"info",        handle_info,    "Print the build information about the program"},
 		{"help",        handle_help,    "Print a help message with info about all supported commands"},
 };
 
@@ -80,14 +82,48 @@ static void process_cmd(char *cmd_buff)
 
 	/* dispatch argc/argv to handler */
 	for(int i=0; i<num_commands; i++) {
-		if(strcasecmp(argv[0], commands[i].name) == 0) {
-			commands[i].handler(argc, argv);
-			return;
+			if(strstr(argv[0], commands[i].name) != NULL) {
+				commands[i].handler(argc, argv);
+				return;
+			}
 		}
-	}
+
 	/* output error messages for the invalid command */
 	printf("\r\nUnknown command: %s", argv[0]);
 	return;
+}
+
+static void receive_command(uint8_t *cmd, int cmd_size)
+{
+	int idx = 0;
+	uint8_t rbuf[CMD_BUF_CAPACITY << 2];
+	uint8_t data[CMD_BUF_CAPACITY];
+	memset(rbuf, 0, sizeof(rbuf));
+	memset(data, 0, sizeof(data));
+
+	uint8_t c;
+
+	do {
+		/* receive one byte at a time */
+		c = getchar();
+
+		 if(c == QUESTION_MARK_BYTE)
+			 break;
+
+		 data[idx++] = c;
+
+		 if(idx >= cmd_size){
+			//failed attempts so far, reset the buffer
+			memset(data,0,sizeof(data));
+			idx = 0;
+		 }
+	}while(1);
+
+	/* convert raw bytes to ASCII stream */
+	bytes_to_ascii(rbuf, sizeof(rbuf), data, idx);
+
+	/* decode the ASCII stream */
+	decode_message(rbuf, cmd);
 }
 
 /**
@@ -98,35 +134,12 @@ static void process_cmd(char *cmd_buff)
 void command_processor()
 {
 	uint8_t cmd_buffer[CMD_BUF_CAPACITY];
-	memset(cmd_buffer,0,CMD_BUF_CAPACITY);
-	int cmd_buf_index = 0;
-	uint8_t character;
 
-//	printf("? ");
-	while(1) {
+	do{
+		memset(cmd_buffer,0,CMD_BUF_CAPACITY);
+		receive_command(cmd_buffer, CMD_BUF_CAPACITY);
+		process_cmd((char *)cmd_buffer);
 
-		character = getchar();
-		if(character != 0xFF){
-
-			if(character == '\b'){
-				cmd_buf_index--;
-				cmd_buffer[cmd_buf_index] = '\0';
-				printf("\b \b");
-			}
-			else{
-				if(character == '\r'){
-					cmd_buf_index = 0; //reset the index
-					process_cmd((char *)cmd_buffer);
-					memset(cmd_buffer,0,CMD_BUF_CAPACITY);
-					printf("\r\n");
-				}
-				else{
-					cmd_buffer[cmd_buf_index++] = character;
-				}
-			}
-		}
-	}
-
-	return;
+	}while(1);
 }
 

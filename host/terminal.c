@@ -1,12 +1,19 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
 #include <string.h>
+#include <errno.h>
 #include <time.h>
 #include "huffman.h"
 #include "serial.h"
+#include "ascii_binary_conv.h"
 
 
-#define CMD_MAX_LIMIT               (16)
+#define CMD_MAX_LIMIT               (8)
 #define CMD_PROC_DELAY_MS           (500)
+#define QUESTION_MARK_BYTE          (0xec)
+#define PERIOD_MARK_BYTE            (0x84)
+
 
 void delay(int milliseconds)
 {
@@ -17,31 +24,6 @@ void delay(int milliseconds)
     now = then = clock();
     while( (now-then) < pause )
         now = clock();
-}
-
-void basic_io_test(int serial_port)
-{
-    char str[] = "Help\r\n";
-    char wbuf[1024];
-    char rbuf[1024];
-    int n;
-
-    while(1) {
-        serial_write(serial_port, &str, sizeof(str));
-        
-        n = serial_read(serial_port,rbuf, sizeof(rbuf));
-        
-        if(n > 0){
-            if(n == 1){
-                printf("%c",rbuf[0]); 
-            }
-            else{
-                printf("%s",rbuf);
-            }
-        }
-        memset(rbuf,0,sizeof(rbuf));
-        delay(5);
-    }
 }
 
 void get_user_cmd(char *cmd)
@@ -62,38 +44,106 @@ void get_user_cmd(char *cmd)
 int main(int argc, char *argv[])
 {
     int serial_port = serial_open();
-    char rbuf[128];
+    uint8_t wbuf[128];
+    uint8_t rbuf[512];
+    uint8_t wdata[512];
+    uint8_t reply[256];
+    uint8_t c;
+    uint8_t result[128];
     int i;
     int n;
+    int data_written;
+    int idx = 0;
     unsigned char cmd[CMD_MAX_LIMIT];
 
+    idx = 0;
+    memset(wdata, 0, sizeof(wdata));
+    memset(wbuf, 0, sizeof(wbuf));
+    memset(cmd, 0, sizeof(cmd));
+    memset(reply, 0, sizeof(reply));
+    memset(rbuf, 0, sizeof(rbuf));
+    memset(result,0,sizeof(result));
+
+
     serial_configure(serial_port);
-    // import_huffman_table();
-    // encode_message(str, wbuf);
-	// printf("encoded: %s\n", wbuf);
 
     while(1) {
+        /* obtain the user-supplied command */
         get_user_cmd(cmd);
 
-        for(i=0;i<strlen(cmd);i++){
-            n = serial_write(serial_port, &cmd[i], 1);
+        /* Send the command to the device */
+
+        /* encode the command using the huffman coding */
+        encode_message((const char *)cmd,wbuf, sizeof(wbuf)); 
+        /* convert the ascii code to raw bytes */
+        data_written = ascii_to_bytes(wbuf, strlen(wbuf), wdata, sizeof(wdata));
+        // append QUESTION_MARK_BYTE to data
+        wdata[++data_written] = QUESTION_MARK_BYTE;
+        //increment data_written
+        data_written++;
+
+        // printf("%d bytes sent: %s\n",data_written, wdata);
+
+        /* we have to only send one byte at a time */
+        for(i=0;i<data_written;i++){
+            // printf("Byte to send : %c\n", wdata[i]);
+            n = serial_write(serial_port, &wdata[i], 1);
             if(n <= 0){
-                printf("Error writing %c, %d bytes written\n", n, cmd[i]);
+                printf("Error writing %c, %d bytes written\n", wdata[i], n);
                 continue;
             }
-            delay(10);
+            //delay 20 milliseconds
+            delay(20);
         }
-        do{
-            n = serial_read(serial_port,rbuf, sizeof(rbuf));
-            if(n == 1){
-                printf("%c",rbuf[0]);
-            }
-            else{
-                printf("%s",rbuf);
-            }
-            memset(rbuf,0,sizeof(rbuf));
-        }while(n > 0);
+        printf("Waiting for the response\n");
+        idx = 0;
 
-        delay(CMD_PROC_DELAY_MS);
+        /* Wait to receive response from the device */
+        do{
+            /* read one byte at a time */
+            n = serial_read(serial_port,&c, 1);
+            if(n > 0){
+                // printf("read %c\n",c);
+
+                /* check if the ending byte is received */
+                if(c == PERIOD_MARK_BYTE)
+                    break;
+
+                reply[idx++] = c;
+
+                if(idx >=  sizeof(reply)){
+                    printf("receiver buffer overlow, clear the buffer\n");
+                    memset(reply,0,sizeof(reply));
+                    idx = 0;
+                }
+            }
+            if(n < 0){
+                printf("Error read: %s\n", strerror(errno));
+                idx = 0;
+            }
+            
+        }while(1);
+
+        printf("%d bytes read: %s\n", idx, reply);
+
+        /* convert raw bytes to ASCII stream */
+        bytes_to_ascii(rbuf, sizeof(rbuf), reply, idx);
+
+        printf("rbuf = %s\n", rbuf);
+
+        /* decode the ASCII stream */
+        decode_message(rbuf, result);
+        /* print the characters on terminal */
+        printf("%s",result);
+
+        /* clear buffers */
+        idx = 0;
+        memset(wdata, 0, sizeof(wdata));
+        memset(wbuf, 0, sizeof(wbuf));
+        memset(cmd, 0, sizeof(cmd));
+        memset(reply, 0, sizeof(reply));
+        memset(rbuf, 0, sizeof(rbuf));
+        memset(result,0,sizeof(result));
     }
 }
+

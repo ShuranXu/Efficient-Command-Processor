@@ -14,7 +14,7 @@
 /* Define the cbfifo capacity in .h file since the macro
  * value is also used in cbfifo_test.c
  */
-#define CBFIFO_CAPACITY         		(512U)
+#define CBFIFO_CAPACITY         		(256U) //512
 
 /**
  * Define the enum that acts as an index to the 2-slot global

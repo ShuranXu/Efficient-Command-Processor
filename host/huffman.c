@@ -1,206 +1,151 @@
 #include <stdio.h>
+#include <stdint.h>
 #include <string.h>
 #include "huffman_table.h"
- 
-typedef struct node_t {
-	struct node_t *left, *right;
-	int freq;
-	char c;
-} *node;
- 
-/* pool acts as heap basically */ 
-struct node_t pool[512] = {{0}};
-/* q acts as the heap tree */
-node qqq[511], *q = qqq + 1;
-int n_nodes = 0, qend = 1;
-char *code[256] = {0}, buf[2048];
+
+#define COMMON_BUFF_SIZE        (32)
 
 
-/*********************************************
- * Internal Helper Functions  
- *********************************************/
-
-static node new_node(int freq, char c, node a, node b)
+static int find_table_index_based_on_bitnum(int bitnum, int *buff)
 {
-	node n = pool + n_nodes++;
-	if (freq) n->c = c, n->freq = freq;
-	else {
-		n->left = a;
-        n->right = b;
-		n->freq = a->freq + b->freq;
-	}
-	return n;
-}
- 
-/* priority queue */
-static void qinsert(node n)
-{
-	/* higher freq has lower priority
-	   move up lower freq */
-	int j;
-    int i = qend++;
-	while ((j = i / 2)) {
-		/* compare freq of the new node with the parent's freq */
-		if (q[j]->freq <= n->freq) 
-            break;
-		q[i] = q[j];
-        i = j;
-	}
-	q[i] = n;
-}
-
-/* remove the top element(q[1]), 
-   and moving up other elements */
-static node qremove()
-{
-	int i, l;
-    i = 1;
-	node n = q[i];
- 
-	if (qend < 2) return 0;
-	qend--;
-	while ((l = i * 2) < qend) {
-		if ((l + 1 < qend) && (q[l + 1]->freq < q[l]->freq))
-             l++;
-		q[i] = q[l];
-        i = l;
-	}
-	q[i] = q[qend];
-	return n;
-}
-
-
-/* walk the tree and put 0s and 1s */
-static void build_code(node n, char *s, int len)
-{
-	static char *out = buf;
-    /* when we reach the leaf nodes, which are nodes with
-    * character, we fill out code[n->c] with the accumulated s
-    */
-	if (n->c) {
-        // printf("build_code(): n->c = %c, n->f = %d\n", n->c, n->freq);
-		s[len] = 0;
-		strcpy(out, s);
-		code[n->c] = out;
-		out += len + 1;
-		return;
-	}
- 
-	s[len] = '0'; 
-    build_code(n->left,  s, len + 1);
-	s[len] = '1'; 
-    build_code(n->right, s, len + 1);
-}
-
-static void encode(const char *s, char *out)
-{
-	while (*s) {
-		strcpy(out, code[*s]);
-		out += strlen(code[*s++]);
-	}
-}
-
-static void decode(const char *s, node t)
-{
-	node n = t;
-	while (*s) {
-		if (*s++ == '0') 
-            n = n->left;
-		else 
-            n = n->right;
- 
-		if (n->c) {
-            putchar(n->c);
-            n = t;
+    huffman_code_t *htp = HUFFMAN_TABLE;
+    int *bufp = buff;
+    int size = 0;
+    while(htp->bits){
+        if(htp->bits == bitnum){
+            size++;
+            *bufp = htp - HUFFMAN_TABLE;
+            bufp++;
         }
-	}
- 
-	putchar('\n');
-	if (t != n) 
-        printf("garbage input\n");
+        htp++;
+    }
+    return size;
 }
 
-static void dump_code()
+void decode_message(const char *s, char *buf)
 {
-    for (int i = 0; i < 128; i++){
-        if (code[i]) 
-            printf("'%c': %s\n", i, code[i]);
-    }   
-}
+    char *p = s;
+    char code[COMMON_BUFF_SIZE];
+    int indices[COMMON_BUFF_SIZE];
+    char *bufp = buf;
+    int n;
+    int brk;
 
-/*********************************************
- * Public User Interface 
- *********************************************/
-
-void import_huffman_table()
-{
-
-    int freq[128] = {0};
-    int i = 0;
-	char c[16];
-    int *fp = ASCII_FREQ_TABLE;
-
-    /* get the values from the table to update the huffman tree */
-	for (i = 0; i < 128; i++){
-        freq[i] = *(fp + i);
-	}
-    
-    /* construct the heap tree */
-	for (i = 0; i < 128; i++){
-        if (freq[i]){
-            /* insert new nodes into the que if there is a frequency */
-            qinsert(new_node(freq[i], i, 0, 0));	
+    while(p){
+        for(int i = MIN_HUFFMAN_CODE_LEN; i < MAX_HUFFMAN_CODE_LEN; i++){
+            memcpy(code, p, i);
+            n = find_table_index_based_on_bitnum(i,indices);
+            for(int j=0;j<n;j++){
+                int idx = indices[j];
+                int bits = HUFFMAN_TABLE[idx].bits;
+                if(strncmp(code, HUFFMAN_TABLE[idx].code, bits) == 0){
+                    *bufp = HUFFMAN_TABLE[idx].c;
+                    // printf("%c, %d bits\n",HUFFMAN_TABLE[idx].c, bits);
+                    bufp++;
+                    p += bits;
+                    brk = 1;
+                    break;
+                }
+            }
+            if(brk){
+                break;
+            }
         }
+        if(brk){
+            brk = 0;
+        }
+        else{
+            return;
+        } 
     }
-		
-    /* complete heap while merging node staring from the lower frequency nodes */
-	/* This is done in the following steps
-	   (1) remove top two nodes which have the highest priority (lowest freq)
-	   (2) make a new one with the two removed nodes while adding the two freqs
-	   (3) when we make the new node, it remembers its children as left/right nodes
-	   (4) keep merging the nodes until there is only one node left
-	*/
-
-	while (qend > 2){
-        //build the tree
-        qinsert(new_node(0, 0, qremove(), qremove()));
-    }
-
-    /* (1) Traverse the constructed tree from root to leaves 
-	   (2) Assign and accumulate 
-	   a '0' for left branch and a '1' for the right branch at each node. 
-	   (3) The accumulated zeros and ones at each leaf constitute a Huffman encoding
-	*/
-	build_code(q[1], c, 0);
 }
 
-void encode_message(const char *s, char *out)
+int encode_message(const char *s, char *buf, int buf_size)
 {
-    encode(s, out);
-} 
+    char *p = s;
+    char *bufp = buf;
+    huffman_code_t *htp = HUFFMAN_TABLE;
 
-void decode_message(const char *s)
-{
-    decode(s, q[1]);
-} 
+    while(*p){
+        while(htp){
+            if(htp->c == *p){
+                int remain_len = buf_size - (bufp - buf);
+                if(remain_len < htp->bits){
+                    printf("Error: buff size exceeded, at least %d more bytes needed\n", htp->bits);
+                    return -1;
+                }
+                memcpy(bufp, htp->code, htp->bits);
+                bufp += htp->bits;
+                break;
+            }
+            htp++;
+        }
+
+        //reset htp
+        htp = HUFFMAN_TABLE;
+        p++;
+    }
+    return 0;
+}
+
+// #define TEST
 
 #ifdef TEST
+
+void test1()
+{
+	printf("Test1:\n");
+    const char *str = "\r\nUsage: command [arg1] [arg2]";
+    // const char *str = "dump 0xa0 0x64";
+    char buff[256];
+    char decodestr[32];
+	memset(decodestr,0,sizeof(decodestr));
+	memset(buff,0,sizeof(buff));
+
+    if(encode_message(str,buff, sizeof(buff)) < 0){
+        return -1;
+    }
+    printf("original str: %s\n", str);
+    printf("encoded str: %s - %d bytes\n",buff, strlen(buff));
+    // decode_message(buff, strlen(buff),decodestr);
+    decode_message(buff, decodestr);
+    printf("decoded str : %s\n", decodestr);
+}
+
+void test2()
+{
+	printf("Test2:\n");
+    const char *rbuf = "01100110001100000110000001100000";
+    uint8_t decodestr[64];
+	memset(decodestr,0,sizeof(decodestr));
+    // decode_message(rbuf, strlen(rbuf), decodestr);
+    decode_message(rbuf, decodestr);
+    printf("decoded str : %s\n", decodestr);
+
+}
+
+void test3()
+{
+	printf("Test3:\n");
+    const char *rbuf = "001000100110001101000001100110111110110100111111110111000100110000111110";
+    uint8_t decodestr[64];
+	memset(decodestr,0,sizeof(decodestr));
+    // decode_message(rbuf, strlen(rbuf), decodestr);
+    decode_message(rbuf, decodestr);
+    printf("decoded str : %s\n", decodestr);
+
+}
+
+
+
+
 int main(void)
 {
-	const char *str = "this is an example for huffman encoding";
-    char buf[1024];
-    printf("original: %s\n", str);
-    //import the file and fills frequency array
-    import_huffman_table();			
+	
+	test1();
+	test3();
 
-    // dump_code();
- 
-	encode(str, buf);
-	printf("encoded: %s\n", buf);
- 
-	printf("decoded: ");
-	decode(buf, q[1]);
- 
 	return 0;
 }
-#endif
+
+#endif 

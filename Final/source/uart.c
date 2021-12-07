@@ -13,24 +13,11 @@
 #include "cbfifo.h"
 #include "MKL25Z4.h"
 #include "sysclock.h"
+#include "common.h"
 
-
-/* The macros ease one's work to update the field
- * and get field values.MODIFY_FIELD() macro basically
- * clears out the target field first and then set
- * the field with value.
- *
- * CLEAR_FIELD() clears out the target field;GET_FIELD()
- * returns the target field value.
- */
-#define MODIFY_FIELD(reg, field, value) ((reg) = ((reg) & ~(field##_MASK)) | \
-(((value) << field##_SHIFT) & field##_MASK))
-#define CLEAR_FIELD(reg, field) ((reg) = (reg) & ~(field##_MASK))
-#define GET_FIELD(reg, field) ((reg & field##_MASK) >> field##_SHIFT)
 #define BAUD_RATE 						(38400)
 #define OVERSAMPLE_RATE 				(16)
 #define STOP_BITS 						(2)
-
 
 /**
  * @brief initialize UART0 to have the following properties:
@@ -182,10 +169,10 @@ int __sys_write(int handle, char *buf, int size)
  * to the RX circular buffer with interrupt disabled to prevent
  * the race condition.
  */
+
 int __sys_readc(void)
 {
-	if(!cbfifo_length(RX))
-		return -1;
+	while(!cbfifo_length(RX));
 
 	uint8_t buf;
 	/* disable interrupts prior to entering the critical section */

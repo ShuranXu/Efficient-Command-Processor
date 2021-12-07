@@ -11,6 +11,7 @@
 #include <string.h>
 #include <stdbool.h>
 #include <stdint.h>
+#include "huffman.h"
 
 /* Define a macro calculting modulo using bitwise operations */
 #define MODULO(num, base)       (num & (base - 1))
@@ -140,35 +141,21 @@ void hex_dump(int argc,char *argv[])
  */
 void handle_author()
 {
-	printf("\r\nShuran Xu");
-}
-
-
-/**
- * @brief Print out the current build information
- * of the executable.
- */
-void handle_info()
-{
-	printf("\r\n Version= ");
-	printf(VERSION_TAG);
-	printf("\r\n Build= ");
-	printf(BUILD_INFO);
-	printf("\r\n Machine = ");
-	printf(BUILD_MACHINE);
-	printf("\r\n Date = ");
-	printf(BUILD_DATE);
+	HUFF_PRINT("\r\nShuran Xu");
 }
 
 /**
  * @brief Print messages to help users to use the command processor.
  */
+
 void handle_help()
 {
-	printf("\r\n\r\nBreakfastSerial");
-	printf("\r\nUsage: command [arg1] [arg2]");
-	printf("\r\n Author       : Print the author name");
-	printf("\r\n Dump         : Print a hexdump of the memory requested");
-	printf("\r\n Info         : Print the build information of the program");
-	printf("\r\n Help         : Print the help message");
+	HUFF_PRINT("\r\nUsage: command [arg1] [arg2]");
+//	HUFF_PRINT("\r\n Author       : Print the author name");
+//	HUFF_PRINT("\r\n Dump         : Print a hexdump of the memory requested");
+//	HUFF_PRINT("\r\n Info         : Print the build information of the program");
+//	HUFF_PRINT("\r\n Help         : Print the help message");
 }
+
+
+
