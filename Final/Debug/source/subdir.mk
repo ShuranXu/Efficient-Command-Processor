@@ -4,6 +4,7 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
+../source/ascii_binary_conv.c \
 ../source/cbfifo.c \
 ../source/cbfifo_test.c \
 ../source/cmd_proc.c \
@@ -16,6 +17,7 @@ C_SRCS += \
 ../source/uart.c 
 
 OBJS += \
+./source/ascii_binary_conv.o \
 ./source/cbfifo.o \
 ./source/cbfifo_test.o \
 ./source/cmd_proc.o \
@@ -28,6 +30,7 @@ OBJS += \
 ./source/uart.o 
 
 C_DEPS += \
+./source/ascii_binary_conv.d \
 ./source/cbfifo.d \
 ./source/cbfifo_test.d \
 ./source/cmd_proc.d \

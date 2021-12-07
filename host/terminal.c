@@ -63,21 +63,21 @@ int main(int argc, char *argv[])
     memset(rbuf, 0, sizeof(rbuf));
     memset(result,0,sizeof(result));
 
-
     serial_configure(serial_port);
 
     while(1) {
         /* obtain the user-supplied command */
         get_user_cmd(cmd);
 
-        printf("command length = %d\n", strlen(cmd));
+        // printf("command length = %d\n", strlen(cmd));
 
         /* Send the command to the device */
 
         /* encode the command using the huffman coding */
         encode_message((const char *)cmd,wbuf, sizeof(wbuf)); 
 
-        printf("wbuf = %s, length = %d\n", wbuf, strlen(wbuf));
+        // printf("wbuf = %s, length = %d\n", wbuf, strlen(wbuf));
+
         /* convert the ascii code to raw bytes */
         data_written = ascii_to_bytes(wbuf, strlen(wbuf), wdata, sizeof(wdata));
 
@@ -100,8 +100,6 @@ int main(int argc, char *argv[])
             }
             //delay 20 milliseconds
             delay(20);
-
-            // c = fgetc(stdin); //for debbuging the device side only for now
         }
         
         while(1){
