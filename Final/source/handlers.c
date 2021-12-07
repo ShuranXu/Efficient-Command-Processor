@@ -84,7 +84,7 @@ void hex_dump(int argc,char *argv[])
 		return;
 	}
 
-	char str[64];
+	char str[40];
 	memset(str,0,sizeof(str));
 
     /* determine the numbers of lines needed */

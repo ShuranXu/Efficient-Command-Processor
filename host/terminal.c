@@ -43,8 +43,8 @@ void get_user_cmd(char *cmd)
 int main(int argc, char *argv[])
 {
     int serial_port = serial_open();
-    uint8_t wbuf[512];
-    uint8_t rbuf[512];
+    uint8_t wbuf[256];
+    uint8_t rbuf[256];
     uint8_t wdata[512];
     uint8_t reply[256];
     uint8_t c;
@@ -110,7 +110,6 @@ int main(int argc, char *argv[])
                 /* read one byte at a time */
                 n = serial_read(serial_port,&c, 1);
                 if(n > 0){
-                    // printf("read %c\n",c);
 
                     /* check if the ending byte is received */
                     if(c == PERIOD_MARK_BYTE)
@@ -136,7 +135,7 @@ int main(int argc, char *argv[])
             /* convert raw bytes to ASCII stream */
             bytes_to_ascii(rbuf, sizeof(rbuf), reply, idx);
 
-            // printf("rbuf = %s\n", rbuf);
+            // printf("\r\nrbuf = %s\n", rbuf);
 
             /* decode the ASCII stream */
             decode_message(rbuf, result);
@@ -160,4 +159,5 @@ int main(int argc, char *argv[])
         }
     }
 }
+
 

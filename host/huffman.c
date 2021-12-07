@@ -147,11 +147,13 @@ void test2()
 void test3()
 {
 	printf("Test3:\n");
-    const char *rbuf = "001000100110001101000001100110111110110100111111110111000100110000111110";
-    uint8_t decodestr[64];
+    const char *rbuf = "011000011000011000011000110100010011000011000110011011000101101110011000010001011101110110011010111011101010110010101010110010110111110110011100110001010110000110001010110000110001010110000110000";
+	printf("rbuf leng = %d\n",strlen(rbuf));
+	uint8_t decodestr[256];
 	memset(decodestr,0,sizeof(decodestr));
     // decode_message(rbuf, strlen(rbuf), decodestr);
     decode_message(rbuf, decodestr);
+	printf("decodestr leng = %d\n",strlen(decodestr));
     printf("decoded str : %s\n", decodestr);
 
 }
@@ -159,11 +161,12 @@ void test3()
 
 int main(void)
 {
-	test4();
+	test3();
 
 	return 0;
 }
 
 #endif 
+
 
 

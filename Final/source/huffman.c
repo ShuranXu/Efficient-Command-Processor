@@ -88,8 +88,8 @@ int encode_message(const char *s, char *buf, int buf_size)
 
 void huffman_print(const char *str)
 {
-    uint8_t wbuf[512];
-    uint8_t data[128];
+    uint8_t wbuf[256];
+    uint8_t data[64];
     int data_written;
 
     memset(wbuf,0,sizeof(wbuf));
