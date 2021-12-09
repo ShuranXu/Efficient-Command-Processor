@@ -8,7 +8,9 @@
 /* Reference global variables defined in tpm.c */
 static uint16_t tone_buffer[TONE_BUFFER_LENGTH];
 static int sample_amount = 0;
-
+extern uint32_t DMA_cycles;
+int dma_action = 0;
+static uint32_t DMA_counter = 0;
 
 /**
  * @brief Initialize DMA0 to enable interrupt and
@@ -16,6 +18,8 @@ static int sample_amount = 0;
  */
 void DMA0_init()
 {
+	dma_action = 0;
+
 	// Gate clocks to DMA and DMAMUX
 	SIM->SCGC7 |= SIM_SCGC7_DMA_MASK;
 	SIM->SCGC6 |= SIM_SCGC6_DMAMUX_MASK;
@@ -48,8 +52,11 @@ void DMA0_init()
 	NVIC_EnableIRQ(DMA0_IRQn);
 }
 
+
+
 void Configure_DMA_Playback(uint16_t *src, int len)
 {
+	dma_action = 1;
 	memcpy(tone_buffer, src, len);
 	sample_amount = len;
 
@@ -84,12 +91,21 @@ static void Start_DMA_Playback()
  * engine for the next DMA request issued by TPM0
  */
 
+
 void DMA0_IRQHandler(void)
 {
 	/* clear all bits */
 	MODIFY_FIELD(DMA0->DMA[0].DSR_BCR, DMA_DSR_BCR_DONE, 1);
 
-	/* reconfigure DMA engine */
-	Start_DMA_Playback();
+	if(dma_action){
+		DMA_counter++;
+		if(DMA_counter > DMA_cycles){
+			DMA_counter = 0;
+			dma_action = 0;
+			return;
+		}
+		/* reconfigure DMA engine */
+		Start_DMA_Playback();
+	}
 }
 

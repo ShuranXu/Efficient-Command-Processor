@@ -135,8 +135,9 @@ void test4()
 void test2()
 {
 	printf("Test2:\n");
-    const char *rbuf = "01100110001100000110000001100000";
+    const char *rbuf = "011100001001010111000000";
     uint8_t decodestr[64];
+    printf("rbuf len = %d\n", strlen(rbuf));
 	memset(decodestr,0,sizeof(decodestr));
     // decode_message(rbuf, strlen(rbuf), decodestr);
     decode_message(rbuf, decodestr);
@@ -161,7 +162,7 @@ void test3()
 
 int main(void)
 {
-	test3();
+	test2();
 
 	return 0;
 }

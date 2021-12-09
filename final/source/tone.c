@@ -42,11 +42,12 @@ static void tone_to_samples(uint32_t tone_freq, uint32_t sampling_freq,
 				TRIG_SCALE_FACTOR;
 	}
 
-	char msg[128];
-	sprintf(msg, "Generated %d samples at %d Hz; computed period = %d samples\r\n", \
-			sampling_stats.total_samples, sampling_stats.tone_freq, \
-			sampling_stats.samples_per_cycle);
+	uint8_t msg[64];
+	memset(msg,0,sizeof(msg));
+	sprintf(msg, "%d samples generated at %d Hz,computed period = %d samples\r\n", \
+			sampling_stats.total_samples, tone_freq, sampling_stats.samples_per_cycle);
 	HUFF_PRINT(msg);
+	HUFF_PRINT("END");
 }
 
 /**

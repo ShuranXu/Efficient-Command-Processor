@@ -71,7 +71,7 @@ int encode_message(const char *s, char *buf, int buf_size)
             if(htp->c == *p){
                 int remain_len = buf_size - (bufp - buf);
                 if(remain_len < htp->bits){
-                    return -1;
+                    return (htp->bits - remain_len);
                 }
                 memcpy(bufp, htp->code, htp->bits);
                 bufp += htp->bits;
@@ -86,17 +86,20 @@ int encode_message(const char *s, char *buf, int buf_size)
     return 0;
 }
 
+static uint8_t wbuf[512];
+
 void huffman_print(const char *str)
 {
-    uint8_t wbuf[256];
     uint8_t data[64];
     int data_written;
+    int res;
 
     memset(wbuf,0,sizeof(wbuf));
     memset(data,0,sizeof(data));
 
 	/* encode the command using the huffman coding */
-	if(encode_message((const char *)str, wbuf, sizeof(wbuf)) < 0)
+    res = encode_message((const char *)str, wbuf, sizeof(wbuf));
+	if(res < 0)
 		return;
 	/* convert the ascii code to raw bytes */
 	data_written = ascii_to_bytes(wbuf, strlen(wbuf), \

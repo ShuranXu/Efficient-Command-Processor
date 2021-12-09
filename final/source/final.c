@@ -59,8 +59,7 @@
  */
 int main(void) {
 
-    /* Init board hardware. */
-    BOARD_InitBootPins();
+    /* Init board hardware. */    BOARD_InitBootPins();
     BOARD_InitBootClocks();
     BOARD_InitBootPeripherals();
 //#ifndef BOARD_INIT_DEBUG_CONSOLE_PERIPHERAL
@@ -91,5 +90,5 @@ int main(void) {
 	//run the command processor
 	command_processor();
 
-    	return 0 ;
+    return 0 ;
 }

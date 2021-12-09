@@ -5,6 +5,7 @@
 #include "common.h"
 #include "huffman.h"
 #include "timer.h"
+#include "handlers.h"
 
 // local macro for fundamental period calculation
 #define ADC_SAMPLE_FREQ				(96000)
@@ -154,6 +155,20 @@ void ADC0_timed_polling(uint32_t duration)
 
 
 /**
+ * @brief Poll ADC0 for sampled data and store
+ * the sampled data into the sample buffer
+ */
+void ADC0_polling()
+{
+	while(buffer_iter < TONE_BUFFER_LENGTH) {
+		while(! (ADC0->SC1[0] & ADC_SC1_COCO_MASK));
+		sample_buffer[buffer_iter++] = ADC0->R[0];
+	}
+}
+
+
+
+/**
  * @brief calculate the fundamental period of the sampled
  * waveform and obtain the statistical information
  * regarding the collected samples.
@@ -167,9 +182,9 @@ void audio_analysis()
 			buffer_iter, kAC_16bps_unsigned);
 
 	if(fund_period < 0){
-		char msg[64];
-		sprintf(msg,"Error fund_period is -1\r\n");
-		HUFF_PRINT(msg);
+//		char msg[64];
+//		sprintf(msg,"Error fund_period is -1\r\n");
+//		HUFF_PRINT(msg);
 		return;
 	}
 

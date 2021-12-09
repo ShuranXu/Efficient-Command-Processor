@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
 {
     int serial_port = serial_open();
     uint8_t wbuf[256];
-    uint8_t rbuf[256];
+    uint8_t rbuf[512];
     uint8_t wdata[512];
     uint8_t reply[256];
     uint8_t c;
@@ -68,8 +68,6 @@ int main(int argc, char *argv[])
     while(1) {
         /* obtain the user-supplied command */
         get_user_cmd(cmd);
-
-        // printf("command length = %d\n", strlen(cmd));
 
         /* Send the command to the device */
 
@@ -157,5 +155,4 @@ int main(int argc, char *argv[])
         }
     }
 }
-
 
