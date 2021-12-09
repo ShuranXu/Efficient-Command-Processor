@@ -1,4 +1,0 @@
-../source/ascii_binary_conv.c:13:6:ascii_to_byte	56	static
-../source/ascii_binary_conv.c:44:5:ascii_to_bytes	40	static
-../source/ascii_binary_conv.c:63:6:byte_to_ascii	24	static
-../source/ascii_binary_conv.c:72:6:bytes_to_ascii	32	static

@@ -1,4 +1,0 @@
-../source/handlers.c:37:13:unsigned_to_hexstr	40	static
-../source/handlers.c:73:6:hex_dump	88	static
-../source/handlers.c:144:6:handle_author	8	static
-../source/handlers.c:154:6:handle_help	8	static

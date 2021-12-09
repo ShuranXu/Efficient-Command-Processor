@@ -1,4 +1,0 @@
-../source/huffman.c:10:12:find_table_index_based_on_bitnum	32	static
-../source/huffman.c:26:6:decode_message	216	static
-../source/huffman.c:63:5:encode_message	40	static
-../source/huffman.c:89:6:huffman_print	352	static

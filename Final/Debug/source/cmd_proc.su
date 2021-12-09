@@ -1,3 +1,0 @@
-../source/cmd_proc.c:53:13:process_cmd	64	static
-../source/cmd_proc.c:96:13:receive_command	192	static
-../source/cmd_proc.c:134:6:command_processor	40	static
