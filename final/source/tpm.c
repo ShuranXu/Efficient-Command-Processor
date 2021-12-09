@@ -70,24 +70,6 @@ void TPM1_init()
 	NVIC_EnableIRQ(TPM1_IRQn);
 }
 
-void enable_TPMs()
-{
-	/* initialize CNT to 0 */
-	TPM1->CNT = 0;
-	/* initialize CNT to 0 */
-	TPM0->CNT = 0;
-	/* Provide clock to TPM0 to start */
-	MODIFY_FIELD(TPM0->SC, TPM_SC_CMOD, 1);
-	/* Provide clock to TPM1 to start */
-	MODIFY_FIELD(TPM1->SC, TPM_SC_CMOD, 1);
-}
-
-void disable_TPMs()
-{
-	CLEAR_FIELD(TPM0->SC, TPM_SC_CMOD);
-	CLEAR_FIELD(TPM1->SC, TPM_SC_CMOD);
-}
-
 /**
  * @brief Overwrite the default handler and update the
  * tone buffer and the tone state per second.

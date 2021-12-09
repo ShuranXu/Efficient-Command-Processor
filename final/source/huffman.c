@@ -3,6 +3,7 @@
 #include <string.h>
 #include "huffman_table.h"
 #include "huffman.h"
+#include "MKL25Z4.h"
 
 #define COMMON_BUFF_SIZE        (32)
 
@@ -99,8 +100,10 @@ void huffman_print(const char *str)
 
 	/* encode the command using the huffman coding */
     res = encode_message((const char *)str, wbuf, sizeof(wbuf));
-	if(res < 0)
+	if(res < 0){
 		return;
+	}
+
 	/* convert the ascii code to raw bytes */
 	data_written = ascii_to_bytes(wbuf, strlen(wbuf), \
 	data, sizeof(data));

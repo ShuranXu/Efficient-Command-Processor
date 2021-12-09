@@ -162,6 +162,7 @@ void handle_help()
 	HUFF_PRINT("\r\nAuthor Print the author name");
 	HUFF_PRINT("\r\nDump   Print hexdump of the memory requested");
 	HUFF_PRINT("\r\nHelp   Print the help message");
+	HUFF_PRINT("\r\nTone   Play tone at the assigned frequency");
 	HUFF_PRINT("END");
 }
 
@@ -189,7 +190,7 @@ void handle_tone(int argc,char *argv[])
 	}
 
 	if(freq < 0 || duration < 0){
-		HUFF_PRINT("Error invalid inputs, both frequency and duration have to bigger than 0\r\n");
+		HUFF_PRINT("Error both frequency and duration have to bigger than 0\r\n");
 		return;
 	}
 
@@ -198,21 +199,16 @@ void handle_tone(int argc,char *argv[])
 	//update the tone buffer based on the frequency
 	fill_in_tone_buffer(freq, tone_buff);
 	//configure DMA buffer
-//	Configure_DMA_Playback(tone_buff,get_tone_sample_amount());
-//
-//	while(dma_action){
-//		ADC0_polling();
-//		audio_analysis();
-//	}
-	//reset the timer
-//	reset_timer();
-	//enable TPMs for sampling
-//	enable_TPMs();
-	//poll ADC0
-//	ADC0_timed_polling(duration);
-	//disable the TPMs
-//	disable_TPMs();
-	//analyze the sampled data
-//	audio_analysis();
+	Configure_DMA_Playback(tone_buff,get_tone_sample_amount());
+
+	while(dma_action){
+		ADC0_polling();
+		audio_analysis();
+		delay_ms(10);
+//		if(audio_analysis() < 0)
+//			break;
+	}
+	HUFF_PRINT("END");
+
 }
 

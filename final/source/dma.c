@@ -65,7 +65,8 @@ void Configure_DMA_Playback(uint16_t *src, int len)
 	DMA0->DMA[0].DAR = DMA_DAR_DAR((uint32_t) (&(DAC0->DAT[0])));
 
 	// byte count
-	DMA0->DMA[0].DSR_BCR = DMA_DSR_BCR_BCR(sample_amount * 2);
+//	DMA0->DMA[0].DSR_BCR = DMA_DSR_BCR_BCR(sample_amount * 2);
+	DMA0->DMA[0].DSR_BCR = DMA_DSR_BCR_BCR(sample_amount);
 	// set enable flag
 	DMAMUX0->CHCFG[0] |= DMAMUX_CHCFG_ENBL_MASK;
 }
@@ -80,7 +81,8 @@ static void Start_DMA_Playback()
 	DMA0->DMA[0].DAR = DMA_DAR_DAR((uint32_t) (&(DAC0->DAT[0])));
 
 	// byte count
-	DMA0->DMA[0].DSR_BCR = DMA_DSR_BCR_BCR(sample_amount * 2);
+//	DMA0->DMA[0].DSR_BCR = DMA_DSR_BCR_BCR(sample_amount * 2);
+	DMA0->DMA[0].DSR_BCR = DMA_DSR_BCR_BCR(sample_amount);
 	// set enable flag
 	DMAMUX0->CHCFG[0] |= DMAMUX_CHCFG_ENBL_MASK;
 }
@@ -102,6 +104,8 @@ void DMA0_IRQHandler(void)
 		if(DMA_counter > DMA_cycles){
 			DMA_counter = 0;
 			dma_action = 0;
+			//disable the enable flag
+			DMAMUX0->CHCFG[0] &= ~DMAMUX_CHCFG_ENBL_MASK;
 			return;
 		}
 		/* reconfigure DMA engine */

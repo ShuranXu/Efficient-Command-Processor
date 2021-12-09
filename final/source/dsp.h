@@ -25,7 +25,7 @@ int32_t ADC_calibrate();
  * waveform and obtain the statistical information
  * regarding the collected samples.
  */
-void audio_analysis();
+int audio_analysis();
 
 /**
  * @brief Poll ADC0 for sampled data for the specified duration

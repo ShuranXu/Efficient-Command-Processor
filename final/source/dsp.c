@@ -167,13 +167,12 @@ void ADC0_polling()
 }
 
 
-
 /**
  * @brief calculate the fundamental period of the sampled
  * waveform and obtain the statistical information
  * regarding the collected samples.
  */
-void audio_analysis()
+int audio_analysis()
 {
 	/* Determine the fundamental period of a
 	 * waveform using autocorrelation
@@ -181,11 +180,18 @@ void audio_analysis()
 	int fund_period = autocorrelate_detect_period((void *)sample_buffer,
 			buffer_iter, kAC_16bps_unsigned);
 
+	// reset buffer_iter
+	memset(sample_buffer, 0, buffer_iter);
+	buffer_iter = 0;
+
 	if(fund_period < 0){
-//		char msg[64];
-//		sprintf(msg,"Error fund_period is -1\r\n");
-//		HUFF_PRINT(msg);
-		return;
+		memset(sample_buffer, 0, buffer_iter);
+		buffer_iter = 0;
+		char msg[32];
+		memset(msg,0,sizeof(msg));
+		sprintf(msg,"Error fund_period is -1\r\n");
+		HUFF_PRINT(msg);
+		return -1;
 	}
 
 	int fund_freq = ADC_SAMPLE_FREQ / fund_period;
@@ -201,10 +207,12 @@ void audio_analysis()
 	/* obtain the sample statistic information from the sample buffer */
 	get_sample_stats(&min, &max, &avg);
 	/* print the result */
-	char msg[128];
+	char msg[72];
+	memset(msg,0,sizeof(msg));
 	sprintf(msg, "min=%d max=%d avg=%d period = %d samples frequency = %d Hz\r\n", \
 			min, max, avg, fund_period, fund_freq);
 	HUFF_PRINT(msg);
+	return 0;
 }
 
 

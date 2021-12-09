@@ -11,9 +11,5 @@ void TPM0_init();
  */
 void TPM1_init();
 
-void enable_TPMs();
-
-void disable_TPMs();
-
 
 #endif

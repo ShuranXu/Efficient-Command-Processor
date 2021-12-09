@@ -90,7 +90,11 @@ static void process_cmd(char *cmd_buff)
 		}
 
 	/* output error messages for the invalid command */
-	printf("\r\nUnknown command: %s", argv[0]);
+	char msg[CMD_BUF_CAPACITY];
+	memset(msg,0,sizeof(msg));
+	sprintf(msg,"Unknown command %s\r\n", argv[0]);
+	HUFF_PRINT(msg);
+	HUFF_PRINT("END");
 	return;
 }
 
