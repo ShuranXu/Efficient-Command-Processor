@@ -3,6 +3,9 @@
 
 #include <stdint.h>
 
+#define SLIDER_LENGTH           (40) //in mm
+
+
 /**
  * @brief calibrate TSI sensor
  */

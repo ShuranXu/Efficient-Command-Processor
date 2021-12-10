@@ -39,7 +39,8 @@ static const command_table_t commands[] = {
 		{"author", 		handle_author, 	"Print the author's name"},
 		{"dump", 		hex_dump, 		"Print a hexdump of the memory requested, with up to 16 bytes per line of output"},
 		{"help",        handle_help,    "Print a help message with info about all supported commands"},
-		{"tone",        handle_tone,    "Play tone at the assigned frequency"}
+		{"tone",        handle_tone,    "Play tone at the assigned frequency"},
+		{"tsi",         handle_tsi,     "Play tone at the frequency controlled by TSI touch"}
 };
 
 /* Determine the number of commands supported */

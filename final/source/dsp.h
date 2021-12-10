@@ -27,11 +27,10 @@ int32_t ADC_calibrate();
  */
 int audio_analysis();
 
-/**
- * @brief Poll ADC0 for sampled data for the specified duration
- * and store the sampled data into the sample buffer
- */
-void ADC0_timed_polling(uint32_t duration);
+
+int ADC0_poll();
+
+
 
 #endif
 

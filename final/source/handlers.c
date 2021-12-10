@@ -15,7 +15,10 @@
 #include "tone.h"
 #include "common.h"
 #include "dsp.h"
+#include "tsi.h"
 
+
+#define MAX_TONE_FREQ 			(1000)
 #define DEFAULT_DURATION 		(1)
 #define DEFAULT_FREQ 			(400)
 /* Define a macro calculting modulo using bitwise operations */
@@ -160,15 +163,30 @@ void handle_author()
 /**
  * @brief Print messages to help users to use the command processor.
  */
-
 void handle_help()
 {
-	HUFF_PRINT("\r\nUsage  Command [arg1] [arg2]");
-	HUFF_PRINT("\r\nAuthor Print the author name");
-	HUFF_PRINT("\r\nDump   Print hexdump of the memory requested");
-	HUFF_PRINT("\r\nHelp   Print the help message");
-	HUFF_PRINT("\r\nTone   Play tone at the assigned frequency");
+	HUFF_PRINT("\r\nUsage           Command [arg1] [arg2]");
+	HUFF_PRINT("\r\nAuthor          Print the author name");
+	HUFF_PRINT("\r\nDump addr len   Print hexdump of the requested memory ");
+	HUFF_PRINT("\r\nHelp            Display all commands");
+	HUFF_PRINT("\r\nTone freq time  Play tone at the given frequency");
+	HUFF_PRINT("\r\nTSI time        Play tone at frequency by TSI sliding");
 	HUFF_PRINT("END");
+}
+
+static void play_tone(int freq, int duration)
+{
+	//update the tone buffer based on the frequency
+	fill_in_tone_buffer(freq, tone_buff);
+	//configure DMA buffer
+	Configure_DMA_Playback(tone_buff,get_tone_sample_amount(), freq * duration);
+
+	while(1){
+		if(ADC0_poll() < 0){
+			break;
+		}
+		audio_analysis();
+	}
 }
 
 void handle_tone(int argc,char *argv[])
@@ -195,16 +213,49 @@ void handle_tone(int argc,char *argv[])
 		return;
 	}
 
-	//update the tone buffer based on the frequency
-	fill_in_tone_buffer(freq, tone_buff);
-	//configure DMA buffer
-	Configure_DMA_Playback(tone_buff,get_tone_sample_amount(), freq * duration);
-
-	while(is_DMA_running()){
-		ADC0_polling();
-		audio_analysis();
-	}
+	play_tone(freq, duration);
 	HUFF_PRINT("END");
+}
 
+
+void handle_tsi(int argc,char *argv[])
+{
+	uint8_t slider_pos;
+	int freq;
+	int duration;
+	uint32_t initial_timestamp = now();
+
+	if(argc < 2){
+		duration = DEFAULT_DURATION;
+	}
+	else{
+		duration = atoi(argv[1]);
+	}
+	/* reset the timer */
+	reset_timer();
+
+	do{
+		/* Poll the touch slider */
+		poll_and_handle_tsi();
+		/* get the latest slider distance for the touch */
+		slider_pos = read_slider_distance();
+		/* obtain the corresponding freq */
+		freq = (slider_pos * MAX_TONE_FREQ) / SLIDER_LENGTH;
+
+//		char msg[64];
+//		memset(msg,0,sizeof(msg));
+//		sprintf(msg,"slider pos=%d, freq=%d Hz\r\n", slider_pos, freq);
+//		HUFF_PRINT(msg);
+//		/* delay for printout */
+//		delay_ms(10);
+
+		/* play the tone at the associated frequency */
+		if(freq){
+			play_tone(freq, 1);
+		}
+
+	}while(get_elapsed_time(initial_timestamp) < (duration * ONE_SECOND_TICKS));
+
+	HUFF_PRINT("END");
 }
 

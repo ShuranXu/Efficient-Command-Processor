@@ -43,6 +43,11 @@ void handle_help();
  */
 void handle_tone(int argc,char *argv[]);
 
+/**
+ * @brief PLay the tone at the frequency determined by the TSI touch
+ */
+void handle_tsi(int argc,char *argv[]);
+
 
 #endif
 

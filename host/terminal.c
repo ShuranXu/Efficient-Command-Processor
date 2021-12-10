@@ -14,7 +14,7 @@
 #define PERIOD_MARK_BYTE            (0x84)
 
 
-void delay(int milliseconds)
+void delay_ms(int milliseconds)
 {
     long pause;
     clock_t now,then;
@@ -69,12 +69,8 @@ int main(int argc, char *argv[])
         /* obtain the user-supplied command */
         get_user_cmd(cmd);
 
-        /* Send the command to the device */
-
         /* encode the command using the huffman coding */
         encode_message((const char *)cmd,wbuf, sizeof(wbuf)); 
-
-        // printf("wbuf = %s, length = %d\n", wbuf, strlen(wbuf));
 
         /* convert the ascii code to raw bytes */
         data_written = ascii_to_bytes(wbuf, strlen(wbuf), wdata, sizeof(wdata));
@@ -85,9 +81,7 @@ int main(int argc, char *argv[])
         wdata[++data_written] = QUESTION_MARK_BYTE;
         //increment data_written
         data_written++;
-
-        // printf("%d bytes sent: %s\n",data_written, wdata);
-
+        
         /* we have to only send one byte at a time */
         for(i=0;i<data_written;i++){
             // printf("Byte to send : %c\n", wdata[i]);
@@ -96,8 +90,6 @@ int main(int argc, char *argv[])
                 printf("Error writing %c, %d bytes written\n", wdata[i], n);
                 continue;
             }
-            //delay 20 milliseconds
-            delay(20);
         }
         
         while(1){
@@ -108,8 +100,9 @@ int main(int argc, char *argv[])
                 if(n > 0){
 
                     /* check if the ending byte is received */
-                    if(c == PERIOD_MARK_BYTE)
+                    if(c == PERIOD_MARK_BYTE){
                         break;
+                    }
 
                     reply[idx++] = c;
 
@@ -126,12 +119,8 @@ int main(int argc, char *argv[])
                 
             }while(1);
 
-            // printf("%d bytes read: %s\n", idx, reply);
-
             /* convert raw bytes to ASCII stream */
             bytes_to_ascii(rbuf, sizeof(rbuf), reply, idx);
-
-            // printf("\r\nrbuf = %s\n", rbuf);
 
             /* decode the ASCII stream */
             decode_message(rbuf, result);

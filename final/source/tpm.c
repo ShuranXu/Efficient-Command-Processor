@@ -31,12 +31,13 @@ void TPM0_init()
 	/* Provide clock to TPM0 to start */
 	MODIFY_FIELD(TPM0->SC, TPM_SC_CMOD, 1);
 	/* Enable overflow interrupt */
-	TPM0->SC |= TPM_SC_DMA_MASK | TPM_SC_TOIE_MASK;
+//	TPM0->SC |= TPM_SC_DMA_MASK | TPM_SC_TOIE_MASK;
+	TPM0->SC |= TPM_SC_DMA_MASK;
 
 	// Enable interrupts in NVIC
-	NVIC_SetPriority(TPM0_IRQn, 3);
-	NVIC_ClearPendingIRQ(TPM0_IRQn);
-	NVIC_EnableIRQ(TPM0_IRQn);
+//	NVIC_SetPriority(TPM0_IRQn, 3);
+//	NVIC_ClearPendingIRQ(TPM0_IRQn);
+//	NVIC_EnableIRQ(TPM0_IRQn);
 }
 
 /**
@@ -60,31 +61,31 @@ void TPM1_init()
 	CLEAR_FIELD(TPM1->SC, TPM_SC_CPWMS);
 
 	/* Enable overflow interrupt */
-	TPM1->SC |= TPM_SC_TOIE_MASK;
+//	TPM1->SC |= TPM_SC_TOIE_MASK;
 	/* Provide clock to TPM1 to start */
 	MODIFY_FIELD(TPM1->SC, TPM_SC_CMOD, 1);
 
 	// Enable interrupts in NVIC
-	NVIC_SetPriority(TPM1_IRQn, 3);
-	NVIC_ClearPendingIRQ(TPM1_IRQn);
-	NVIC_EnableIRQ(TPM1_IRQn);
+//	NVIC_SetPriority(TPM1_IRQn, 3);
+//	NVIC_ClearPendingIRQ(TPM1_IRQn);
+//	NVIC_EnableIRQ(TPM1_IRQn);
 }
 
 /**
  * @brief Overwrite the default handler and update the
  * tone buffer and the tone state per second.
  */
-void TPM0_IRQHandler() {
-
-	TPM0->SC |= TPM_SC_TOIE_MASK; // reset overflow flag
-	TPM0->STATUS |= TPM_STATUS_CH0F_MASK; //clear CH0F bit
-}
-
-/**
- * @brief Overwrite the default handler.
- */
-void TPM1_IRQHandler() {
-
-	TPM1->SC |= TPM_SC_TOIE_MASK; // reset overflow flag
-	TPM1->STATUS |= TPM_STATUS_CH1F_MASK; //clear CH1F bit
-}
+//void TPM0_IRQHandler() {
+//
+//	TPM0->SC |= TPM_SC_TOIE_MASK; // reset overflow flag
+//	TPM0->STATUS |= TPM_STATUS_CH0F_MASK; //clear CH0F bit
+//}
+//
+///**
+// * @brief Overwrite the default handler.
+// */
+//void TPM1_IRQHandler() {
+//
+//	TPM1->SC |= TPM_SC_TOIE_MASK; // reset overflow flag
+//	TPM1->STATUS |= TPM_STATUS_CH1F_MASK; //clear CH1F bit
+//}

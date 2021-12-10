@@ -15,13 +15,13 @@
 #include "common.h"
 
 #define SYSCLOCK_FREQUENCY 				(48000000U)
-#define BAUD_RATE 						(38400)
+#define BAUD_RATE 						(115200) //38400
 #define OVERSAMPLE_RATE 				(16)
 #define STOP_BITS 						(2)
 
 /**
  * @brief initialize UART0 to have the following properties:
- *  - baud rate 38400
+ *  - baud rate 115200
  *  - 8 bit data
  *  - No parity bits
  *  - 2 stop bits
@@ -162,7 +162,6 @@ int __sys_write(int handle, char *buf, int size)
 
 	return 0;
 }
-
 
 /**
  * @brief override __sys_readc() to redirect data received from UART0

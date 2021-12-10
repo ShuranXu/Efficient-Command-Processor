@@ -4,7 +4,6 @@
 #include "common.h"
 
 /* Macros for TSI slider position calculation */
-#define SLIDER_LENGTH           (40) //in mm
 #define TSI_LEFT_SIDE 			(10)
 #define TSI_CENTRE_SIDE 		(30)
 #define TOTAL_TSI_ELECTRODES    (2)

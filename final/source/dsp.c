@@ -141,33 +141,22 @@ static void get_sample_stats(int *min, int *max, int *avg)
  * @brief Poll ADC0 for sampled data and store
  * the sampled data into the sample buffer
  */
-//void ADC0_polling()
-//{
-//	while(buffer_iter < TONE_BUFFER_LENGTH) {
-//		while(! (ADC0->SC1[0] & ADC_SC1_COCO_MASK));
-//		sample_buffer[buffer_iter++] = ADC0->R[0];
-//	}
-//}
 
-void ADC0_polling()
+int ADC0_poll()
 {
 	while(buffer_iter < TONE_BUFFER_LENGTH) {
-		while(! (ADC0->SC1[0] & ADC_SC1_COCO_MASK) && \
-				is_DMA_running());
-		sample_buffer[buffer_iter++] = ADC0->R[0];
+		if(is_DMA_running()){
+			while(! (ADC0->SC1[0] & ADC_SC1_COCO_MASK));
+			sample_buffer[buffer_iter++] = ADC0->R[0];
+		}
+		else{
+			return -1;
+		}
 	}
+	return 0;
 }
 
-//void ADC0_polling()
-//{
-//	while(buffer_iter < TONE_BUFFER_LENGTH) {
-//		while(! (ADC0->SC1[0] & ADC_SC1_COCO_MASK) && \
-//				is_DMA_running()){
-//			delay_ms(1);
-//		}
-//		sample_buffer[buffer_iter++] = ADC0->R[0];
-//	}
-//}
+
 /**
  * @brief calculate the fundamental period of the sampled
  * waveform and obtain the statistical information

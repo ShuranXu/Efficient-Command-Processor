@@ -100,7 +100,6 @@ int is_DMA_running()
  * engine for the next DMA request issued by TPM0
  */
 
-
 void DMA0_IRQHandler(void)
 {
 	/* clear all bits */
