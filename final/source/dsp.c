@@ -113,31 +113,6 @@ int32_t ADC_calibrate()
 }
 
 /**
- * @brief calculate the min, the max and the average from
- * the sample buffer.
- * @param min: the pointer of the min variable
- * @param max: the pointer of the max variable
- * @param avg: the pointer of the avg variable
- */
-static void get_sample_stats(int *min, int *max, int *avg)
-{
-	int sum = 0;
-	int temp;
-
-	for(int i =0; i < TONE_BUFFER_LENGTH; i++) {
-		temp = sample_buffer[i];
-		if(temp < *min){
-			*min = temp;
-		}
-		if(temp > *max){
-			*max = temp;
-		}
-		sum += temp;
-	}
-	*avg = sum / TONE_BUFFER_LENGTH;
-}
-
-/**
  * @brief Poll ADC0 for sampled data and store
  * the sampled data into the sample buffer
  */
@@ -190,17 +165,11 @@ int audio_analysis()
 	memset(sample_buffer, 0, buffer_iter);
 	buffer_iter = 0;
 
-	int min = 32768;
-	int max = 0;
-	int avg = 0;
-
-	/* obtain the sample statistic information from the sample buffer */
-	get_sample_stats(&min, &max, &avg);
 	/* print the result */
-	char msg[64];
+	char msg[40];
 	memset(msg,0,sizeof(msg));
-	sprintf(msg, "min=%d max=%d avg=%d period=%d samples freq=%d Hz\r\n", \
-			min, max, avg, fund_period, fund_freq);
+	sprintf(msg, "period=%d samples freq=%d Hz\r\n", \
+			fund_period, fund_freq);
 
 	HUFF_PRINT(msg);
 	return 0;
