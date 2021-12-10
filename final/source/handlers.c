@@ -21,6 +21,11 @@
 /* Define a macro calculting modulo using bitwise operations */
 #define MODULO(num, base)       (num & (base - 1))
 
+
+static uint16_t tone_buff[TONE_BUFFER_LENGTH];
+
+
+
 /**
  * @brief local helper function to convert int number
  * to hexdecimal string.
@@ -166,10 +171,6 @@ void handle_help()
 	HUFF_PRINT("END");
 }
 
-static uint16_t tone_buff[TONE_BUFFER_LENGTH];
-uint32_t DMA_cycles = 0;
-extern int dma_action;
-
 void handle_tone(int argc,char *argv[])
 {
 	int freq;
@@ -194,19 +195,14 @@ void handle_tone(int argc,char *argv[])
 		return;
 	}
 
-	DMA_cycles = freq * duration;
-
 	//update the tone buffer based on the frequency
 	fill_in_tone_buffer(freq, tone_buff);
 	//configure DMA buffer
-	Configure_DMA_Playback(tone_buff,get_tone_sample_amount());
+	Configure_DMA_Playback(tone_buff,get_tone_sample_amount(), freq * duration);
 
-	while(dma_action){
+	while(is_DMA_running()){
 		ADC0_polling();
 		audio_analysis();
-		delay_ms(10);
-//		if(audio_analysis() < 0)
-//			break;
 	}
 	HUFF_PRINT("END");
 

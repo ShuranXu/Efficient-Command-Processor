@@ -6,6 +6,7 @@
 #include "huffman.h"
 #include "timer.h"
 #include "handlers.h"
+#include "dma.h"
 
 // local macro for fundamental period calculation
 #define ADC_SAMPLE_FREQ				(96000)
@@ -137,36 +138,36 @@ static void get_sample_stats(int *min, int *max, int *avg)
 }
 
 /**
- * @brief Poll ADC0 for sampled data for the specified duration
- * and store the sampled data into the sample buffer
- */
-void ADC0_timed_polling(uint32_t duration)
-{
-	uint32_t initial_timestamp = 0;
-
-	while((buffer_iter < TONE_BUFFER_LENGTH) && \
-			(get_elapsed_time(initial_timestamp) > (duration * ONE_SECOND_TICKS))){
-		while(! (ADC0->SC1[0] & ADC_SC1_COCO_MASK));
-		sample_buffer[buffer_iter++] = ADC0->R[0];
-		/* update curr_time */
-		initial_timestamp = now();
-	}
-}
-
-
-/**
  * @brief Poll ADC0 for sampled data and store
  * the sampled data into the sample buffer
  */
+//void ADC0_polling()
+//{
+//	while(buffer_iter < TONE_BUFFER_LENGTH) {
+//		while(! (ADC0->SC1[0] & ADC_SC1_COCO_MASK));
+//		sample_buffer[buffer_iter++] = ADC0->R[0];
+//	}
+//}
+
 void ADC0_polling()
 {
 	while(buffer_iter < TONE_BUFFER_LENGTH) {
-		while(! (ADC0->SC1[0] & ADC_SC1_COCO_MASK));
+		while(! (ADC0->SC1[0] & ADC_SC1_COCO_MASK) && \
+				is_DMA_running());
 		sample_buffer[buffer_iter++] = ADC0->R[0];
 	}
 }
 
-
+//void ADC0_polling()
+//{
+//	while(buffer_iter < TONE_BUFFER_LENGTH) {
+//		while(! (ADC0->SC1[0] & ADC_SC1_COCO_MASK) && \
+//				is_DMA_running()){
+//			delay_ms(1);
+//		}
+//		sample_buffer[buffer_iter++] = ADC0->R[0];
+//	}
+//}
 /**
  * @brief calculate the fundamental period of the sampled
  * waveform and obtain the statistical information
@@ -207,10 +208,11 @@ int audio_analysis()
 	/* obtain the sample statistic information from the sample buffer */
 	get_sample_stats(&min, &max, &avg);
 	/* print the result */
-	char msg[72];
+	char msg[64];
 	memset(msg,0,sizeof(msg));
-	sprintf(msg, "min=%d max=%d avg=%d period = %d samples frequency = %d Hz\r\n", \
+	sprintf(msg, "min=%d max=%d avg=%d period=%d samples freq=%d Hz\r\n", \
 			min, max, avg, fund_period, fund_freq);
+
 	HUFF_PRINT(msg);
 	return 0;
 }

@@ -7,7 +7,10 @@
  */
 void DMA0_init();
 
-void Configure_DMA_Playback(uint16_t *src, int len);
+int is_DMA_running();
+
+void Configure_DMA_Playback(uint16_t *src, int sample_mnt, \
+		uint32_t dma_cycles);
 
 #endif
 

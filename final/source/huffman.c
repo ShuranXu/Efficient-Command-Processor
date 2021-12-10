@@ -7,7 +7,6 @@
 
 #define COMMON_BUFF_SIZE        (32)
 
-
 static int find_table_index_based_on_bitnum(int bitnum, int *buff)
 {
     huffman_code_t *htp = HUFFMAN_TABLE;
@@ -87,10 +86,9 @@ int encode_message(const char *s, char *buf, int buf_size)
     return 0;
 }
 
-static uint8_t wbuf[512];
-
 void huffman_print(const char *str)
 {
+	uint8_t wbuf[512];
     uint8_t data[64];
     int data_written;
     int res;

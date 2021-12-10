@@ -8,8 +8,8 @@
 /* Reference global variables defined in tpm.c */
 static uint16_t tone_buffer[TONE_BUFFER_LENGTH];
 static int sample_amount = 0;
-extern uint32_t DMA_cycles;
-int dma_action = 0;
+static uint32_t DMA_cycles;
+static int dma_action = 0;
 static uint32_t DMA_counter = 0;
 
 /**
@@ -52,13 +52,12 @@ void DMA0_init()
 	NVIC_EnableIRQ(DMA0_IRQn);
 }
 
-
-
-void Configure_DMA_Playback(uint16_t *src, int len)
+void Configure_DMA_Playback(uint16_t *src, int sample_mnt, uint32_t dma_cycles)
 {
+	DMA_cycles = dma_cycles;
 	dma_action = 1;
-	memcpy(tone_buffer, src, len);
-	sample_amount = len;
+	memcpy(tone_buffer, src, sample_mnt);
+	sample_amount = sample_mnt;
 
 	// initialize source and destination pointers
 	DMA0->DMA[0].SAR = DMA_SAR_SAR((uint32_t) tone_buffer);
@@ -67,6 +66,10 @@ void Configure_DMA_Playback(uint16_t *src, int len)
 	// byte count
 //	DMA0->DMA[0].DSR_BCR = DMA_DSR_BCR_BCR(sample_amount * 2);
 	DMA0->DMA[0].DSR_BCR = DMA_DSR_BCR_BCR(sample_amount);
+
+	// enable a source without periodic triggering
+	DMAMUX0->CHCFG[0] |= DMAMUX_CHCFG_SOURCE(54);
+
 	// set enable flag
 	DMAMUX0->CHCFG[0] |= DMAMUX_CHCFG_ENBL_MASK;
 }
@@ -87,6 +90,10 @@ static void Start_DMA_Playback()
 	DMAMUX0->CHCFG[0] |= DMAMUX_CHCFG_ENBL_MASK;
 }
 
+int is_DMA_running()
+{
+	return dma_action;
+}
 
 /**
  * @brief Overwrite the default handler and reconfigure DMA
@@ -104,6 +111,8 @@ void DMA0_IRQHandler(void)
 		if(DMA_counter > DMA_cycles){
 			DMA_counter = 0;
 			dma_action = 0;
+			// disable a source without periodic triggering
+			DMAMUX0->CHCFG[0] &= ~DMAMUX_CHCFG_SOURCE(54);
 			//disable the enable flag
 			DMAMUX0->CHCFG[0] &= ~DMAMUX_CHCFG_ENBL_MASK;
 			return;
