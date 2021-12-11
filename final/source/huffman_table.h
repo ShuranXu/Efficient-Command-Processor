@@ -11,7 +11,7 @@ typedef struct {
     uint16_t bits;
 }huffman_code_t;
 
-huffman_code_t HUFFMAN_TABLE[] = {
+const huffman_code_t HUFFMAN_TABLE[] = {
 {'\n',"0011000",7},
 {'\r',"0010001",7},
 {' ',"101",3},

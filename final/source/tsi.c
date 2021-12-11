@@ -31,11 +31,11 @@ typedef struct {
 /* Declare global variables */
 static uint8_t tsiChannels[]={TSICHANNEL9,TSICHANNEL10};
 static uint16_t tsiBaseCnt[TOTAL_TSI_ELECTRODES];
-static tsi_thrshd tsiThreshold[] = { {HIGH_THRESHOLD0, LOW_THRESHOLD0},
+const static tsi_thrshd tsiThreshold[] = { {HIGH_THRESHOLD0, LOW_THRESHOLD0},
 		{HIGH_THRESHOLD1, LOW_THRESHOLD1}
 };
-static volatile uint16_t tsiCntDelta[] = {0,0};
-static volatile uint8_t curr_channel = 0;
+static uint16_t tsiCntDelta[] = {0,0};
+static uint8_t curr_channel = 0;
 
 /**
  * @brief restart TSI slider.
