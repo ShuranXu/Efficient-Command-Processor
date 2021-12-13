@@ -8,10 +8,57 @@
 #include <termios.h> // Contains POSIX terminal control definitions
 #include <unistd.h> // write(), read(), close()
 
+#define BUFSIZE     32
+
+typedef enum {
+    NORMAL = 0,
+    NO_PORT = -1,
+    ERROR_CLOSE = -2
+}output_type_t;
+
+static output_type_t get_serial_port(char *dstbuf) {
+
+    char *cmd = "ls /dev | grep ttyACM";    
+    char buf[BUFSIZE];
+    FILE *fp;
+
+    if ((fp = popen(cmd, "r")) == NULL) {
+        return NO_PORT;
+    }
+
+    while (fgets(buf, BUFSIZE, fp) != NULL) {
+        strcat(dstbuf,buf);
+    }
+
+    //remove newline character in the output buffer
+    dstbuf[strcspn(dstbuf, "\n")] = 0;
+
+    if(pclose(fp))  {
+        
+        return ERROR_CLOSE;
+    }
+
+    return 0;
+}
 
 int serial_open()
 {
-    int serial_port = open("/dev/ttyACM1", O_RDWR);
+    char serial_port_addr[32];
+    const char *prefix = "/dev/";
+    memcpy(serial_port_addr, prefix, strlen(prefix));
+    output_type_t status = get_serial_port(serial_port_addr);
+
+    if(status ==  NO_PORT){
+        printf("No port found, program exits\n");
+        return -1;
+    }
+
+    if(status == ERROR_CLOSE){
+        printf("Exited command with error status\n");
+        return -1;
+    }
+
+    int serial_port = open(serial_port_addr, O_RDWR);
 
     // Check for errors
     if (serial_port < 0) {
