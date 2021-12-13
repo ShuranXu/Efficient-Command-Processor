@@ -24,7 +24,7 @@ static int find_table_index_based_on_bitnum(int bitnum, int *buff)
 
 void decode_message(const char *s, char *buf)
 {
-    char *p = s;
+    char *p = (char *)s;
     char code[COMMON_BUFF_SIZE];
     int indices[COMMON_BUFF_SIZE];
     char *bufp = buf;
@@ -40,7 +40,6 @@ void decode_message(const char *s, char *buf)
                 int bits = HUFFMAN_TABLE[idx].bits;
                 if(strncmp(code, HUFFMAN_TABLE[idx].code, bits) == 0){
                     *bufp = HUFFMAN_TABLE[idx].c;
-                    // printf("%c, %d bits\n",HUFFMAN_TABLE[idx].c, bits);
                     bufp++;
                     p += bits;
                     brk = 1;
@@ -62,7 +61,7 @@ void decode_message(const char *s, char *buf)
 
 int encode_message(const char *s, char *buf, int buf_size)
 {
-    char *p = s;
+    char *p = (char *)s;
     char *bufp = buf;
     huffman_code_t *htp = HUFFMAN_TABLE;
 
@@ -88,9 +87,9 @@ int encode_message(const char *s, char *buf, int buf_size)
     return 0;
 }
 
-// #define TEST
+// #define HUFFMAN_TEST
 
-#ifdef TEST
+#ifdef HUFFMAN_TEST
 
 void test1()
 {
@@ -148,12 +147,12 @@ void test2()
 void test3()
 {
 	printf("Test3:\n");
-    const char *rbuf = "011000011000011000011000110100010011000011000110011011000101101110011000010001011101110110011010111011101010110010101010110010110111110110011100110001010110000110001010110000110001010110000110000";
-	printf("rbuf leng = %d\n",strlen(rbuf));
+    const char *rbuf = "011110100101111010110011011000101011110001111100010101011001101011010000100111100001101110011101001110011001001001010110011110011010110101011111011001100010111000000010110110010010100100011010101100111011110011011000110110100101001110111101";
+    printf("rbuf leng = %d\n",strlen(rbuf));
 	uint8_t decodestr[256];
 	memset(decodestr,0,sizeof(decodestr));
-    // decode_message(rbuf, strlen(rbuf), decodestr);
     decode_message(rbuf, decodestr);
+    printf("\n");
 	printf("decodestr leng = %d\n",strlen(decodestr));
     printf("decoded str : %s\n", decodestr);
 
@@ -162,7 +161,7 @@ void test3()
 
 int main(void)
 {
-	test2();
+	test3();
 
 	return 0;
 }

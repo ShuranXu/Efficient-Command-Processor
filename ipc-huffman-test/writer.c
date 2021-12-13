@@ -70,11 +70,11 @@ int main()
         // 32 is maximum length
         printf("\r\nUser Input: ");
         fgets(cmd, 32, stdin);
-        printf("%d bytes are provided by the user\n", strlen(cmd));
+        printf("%ld bytes are provided by the user\n", strlen(cmd));
 
         /* encode the command using the huffman coding */
-        encode_message((const char *)cmd, wbuf); 
-        printf("wbuf = %s, %d bytes\n", wbuf, strlen(wbuf));
+        encode_message((const char *)cmd, wbuf, sizeof(wbuf)); 
+        printf("wbuf = %s, %ld bytes\n", wbuf, strlen(wbuf));
         /* convert the ascii code to raw bytes */
         data_written = ascii_to_bytes(wbuf, strlen(wbuf), \
         data, sizeof(data));
@@ -127,7 +127,7 @@ int main()
         /* convert raw bytes to ASCII stream */
         bytes_to_ascii(rbuf, sizeof(rbuf), reply, idx);
 
-        printf("rbuf = %s, %d bytes\n", rbuf, strlen(rbuf));
+        printf("rbuf = %s, %ld bytes\n", rbuf, strlen(rbuf));
 
         /* decode the ASCII stream */
         decode_message(rbuf, data);

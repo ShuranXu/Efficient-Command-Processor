@@ -349,8 +349,8 @@ static void test4()
 
 int main(void)
 {
-	// test0();
-	test1("dump 0xa0 0x64\n");
+	test0();
+	// test1("dump 0xa0 0x64\n");
 	return 0;
 }
 #endif

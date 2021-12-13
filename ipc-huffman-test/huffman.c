@@ -24,7 +24,7 @@ static int find_table_index_based_on_bitnum(int bitnum, int *buff)
 
 void decode_message(const char *s, char *buf)
 {
-    char *p = s;
+    char *p = (char *)s;
     char code[COMMON_BUFF_SIZE];
     int indices[COMMON_BUFF_SIZE];
     char *bufp = buf;
@@ -40,7 +40,6 @@ void decode_message(const char *s, char *buf)
                 int bits = HUFFMAN_TABLE[idx].bits;
                 if(strncmp(code, HUFFMAN_TABLE[idx].code, bits) == 0){
                     *bufp = HUFFMAN_TABLE[idx].c;
-                    // printf("%c, %d bits\n",HUFFMAN_TABLE[idx].c, bits);
                     bufp++;
                     p += bits;
                     brk = 1;
@@ -62,7 +61,7 @@ void decode_message(const char *s, char *buf)
 
 int encode_message(const char *s, char *buf, int buf_size)
 {
-    char *p = s;
+    char *p = (char *)s;
     char *bufp = buf;
     huffman_code_t *htp = HUFFMAN_TABLE;
 
@@ -88,16 +87,40 @@ int encode_message(const char *s, char *buf, int buf_size)
     return 0;
 }
 
-#define TEST
+// #define HUFFMAN_TEST
 
-#ifdef TEST
+#ifdef HUFFMAN_TEST
 
 void test1()
 {
-    const char *str = "help\n";
+	printf("Test1:\n");
+    const char *str = "\r\nUsage: command [arg1] [arg2]";
     // const char *str = "dump 0xa0 0x64";
-    char buff[128];
+    char buff[256];
     char decodestr[32];
+	memset(decodestr,0,sizeof(decodestr));
+	memset(buff,0,sizeof(buff));
+
+    if(encode_message(str,buff, sizeof(buff)) < 0){
+        return -1;
+    }
+    printf("original str: %s\n", str);
+    printf("encoded str: %s - %d bytes\n",buff, strlen(buff));
+    // decode_message(buff, strlen(buff),decodestr);
+    decode_message(buff, decodestr);
+    printf("decoded str : %s\n", decodestr);
+}
+
+void test4()
+{
+	printf("Test4:\n");
+    const char *str = "dump 0xa0 0x40";
+	printf("str length = %d\n", strlen(str));
+    char buff[256];
+    char decodestr[32];
+	memset(decodestr,0,sizeof(decodestr));
+	memset(buff,0,sizeof(buff));
+
     if(encode_message(str,buff, sizeof(buff)) < 0){
         return -1;
     }
@@ -110,10 +133,27 @@ void test1()
 
 void test2()
 {
-    const char *rbuf = "001000100110000101100000001010011100100100010000010110001010100111100111100011111110100011010000110001110110100100111001101000001010000110001110110100100011000100110000";
-    uint8_t decodestr[128];
+	printf("Test2:\n");
+    const char *rbuf = "011100001001010111000000";
+    uint8_t decodestr[64];
+    printf("rbuf len = %d\n", strlen(rbuf));
+	memset(decodestr,0,sizeof(decodestr));
     // decode_message(rbuf, strlen(rbuf), decodestr);
     decode_message(rbuf, decodestr);
+    printf("decoded str : %s\n", decodestr);
+
+}
+
+void test3()
+{
+	printf("Test3:\n");
+    const char *rbuf = "011110100101111010110011011000101011110001111100010101011001101011010000100111100001101110011101001110011001001001010110011110011010110101011111011001100010111000000010110110010010100100011010101100111011110011011000110110100101001110111101";
+    printf("rbuf leng = %d\n",strlen(rbuf));
+	uint8_t decodestr[256];
+	memset(decodestr,0,sizeof(decodestr));
+    decode_message(rbuf, decodestr);
+    printf("\n");
+	printf("decodestr leng = %d\n",strlen(decodestr));
     printf("decoded str : %s\n", decodestr);
 
 }
@@ -121,9 +161,12 @@ void test2()
 
 int main(void)
 {
-	test2();
+	test3();
 
 	return 0;
 }
 
 #endif 
+
+
+

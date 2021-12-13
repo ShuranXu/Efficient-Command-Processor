@@ -86,8 +86,6 @@ int encode_message(const char *s, char *buf, int buf_size)
     return 0;
 }
 
-//static uint8_t wbuf[512];
-
 void huffman_print(const char *str)
 {
 	uint8_t wbuf[512];

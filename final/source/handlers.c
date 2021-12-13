@@ -241,14 +241,6 @@ void handle_tsi(int argc,char *argv[])
 		slider_pos = read_slider_distance();
 		/* obtain the corresponding freq */
 		freq = (slider_pos * MAX_TONE_FREQ) / SLIDER_LENGTH;
-
-//		char msg[64];
-//		memset(msg,0,sizeof(msg));
-//		sprintf(msg,"slider pos=%d, freq=%d Hz\r\n", slider_pos, freq);
-//		HUFF_PRINT(msg);
-//		/* delay for printout */
-//		delay_ms(10);
-
 		/* play the tone at the associated frequency */
 		if(freq){
 			play_tone(freq, 1);

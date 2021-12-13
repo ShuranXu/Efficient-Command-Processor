@@ -11,7 +11,7 @@
 
 int serial_open()
 {
-    int serial_port = open("/dev/ttyACM0", O_RDWR);
+    int serial_port = open("/dev/ttyACM1", O_RDWR);
 
     // Check for errors
     if (serial_port < 0) {
@@ -55,8 +55,8 @@ void serial_configure(int serial_port)
     tty.c_cc[VTIME] = 1;   
     tty.c_cc[VMIN] = 0;
     // Set in/out baud rate to be 38400
-    cfsetispeed(&tty, B38400);
-    cfsetospeed(&tty, B38400);
+    cfsetispeed(&tty, B115200);
+    cfsetospeed(&tty, B115200);
 
     // Save tty settings, also checking for error
     if (tcsetattr(serial_port, TCSANOW, &tty) != 0) {

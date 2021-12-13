@@ -42,11 +42,12 @@ void ascii_to_byte(char *buf, int bufsize, uint8_t *byte)
 }
 
 
-int ascii_to_bytes(char *buf, int buf_size, uint8_t *bytes, int bytes_size)
+int ascii_to_bytes(const char *ascii_str, int ascii_str_size, \
+uint8_t *bytes, int bytes_size)
 {
     uint8_t *bytesp = bytes;
-    char *bufp = buf;
-    int residue = buf_size;
+    char *bufp = (char *)ascii_str;
+    int residue = ascii_str_size;
 
     while(residue >= 8){
         ascii_to_byte(bufp, 8, bytesp);
@@ -71,31 +72,33 @@ void byte_to_ascii(char *buf, uint8_t byte)
     }
 }
 
-void bytes_to_ascii(char *buf, int buf_size, uint8_t *bytes, int byte_size)
+int bytes_to_ascii(char *ascii_str, int ascii_str_size, \
+uint8_t *bytes, int bytes_size)
 {
-    int len = (byte_size << 2);
-    if(len > buf_size){
-        printf("Error: bytes size = %d and buf size = %d, abort\n", byte_size, buf_size);
-        return;
+    int len = (bytes_size << 2);
+    if(len > ascii_str_size){
+        return -1;
     }
 
-    for(int i=0;i<byte_size;i++){
-        byte_to_ascii(&buf[i << 3], *bytes++);
+    for(int i=0;i<bytes_size;i++){
+        byte_to_ascii(&ascii_str[i << 3], *bytes++);
     }
+
+    return 0;
 }
 
 
-// #define TEST
+// #define ASCII_BINARY_CONV_TEST
 
-#ifdef TEST
+#ifdef ASCII_BINARY_CONV_TEST
 
 void test_byte_to_ascii()
 {
     char buf[8];
-    // uint8_t byte = 0xab;
     uint8_t byte = 0x28;
     printf("byte to be encoded = 0x%x\n", byte);
     byte_to_ascii(buf, byte);
+    printf("Encoded bytes become %s\n", buf);
 }
 
 void test_bytes_to_ascii()
@@ -110,6 +113,7 @@ void test_bytes_to_ascii()
     char buf[33];
     memset(buf,0,33);
     bytes_to_ascii(buf, 33, bytes, 4);
+    printf("Encoded bytes become %s\n", buf);
 }
 
 /* The LSM bit is the rightmost character and the MSB bit 
@@ -119,9 +123,8 @@ void test_ascii_to_byte()
 {
     //0xab
     char buf[] = "10101011";
-    // char buf[] = "0101000";
     uint8_t byte;
-    ascii_to_byte(buf, &byte);
+    ascii_to_byte(buf, 1, &byte);
 }
 
 void test_ascii_to_bytes()
@@ -129,12 +132,16 @@ void test_ascii_to_bytes()
     //0xab0f8844
     char buf[] = "10101011000011111000100001000100";
     uint8_t bytes[4];
-    ascii_to_bytes(buf, bytes, 4);
+    ascii_to_bytes(buf, strlen(buf), bytes, sizeof(bytes));
+    for(int i=0;i<4;i++){
+        printf("0x%x\t", bytes[i]);
+    }
+    printf("\r\n");
 }
 
 int main(int argc, char *argv[])
 {
-    test_byte_to_ascii();
+    test_ascii_to_bytes();
 }
 
 #endif
