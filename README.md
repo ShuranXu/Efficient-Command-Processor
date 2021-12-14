@@ -109,6 +109,11 @@ CUnit test framework is used to test the APIs for the huffman module and the ASC
 
 <img src="./images/sc-cunit.png" width="550" height="250">
 
+Note: If CUnit framework needs to be installed on the Linux host, please run the following command:
+```
+sudo apt-get install libcunit1 libcunit1-doc libcunit1-dev
+```
+
 - IPC program pairs
 
 To test the behaviour of the mix of the huffman coding module and the ASCII-Byte conversion module, a pair of C programs are written in which they talk to each other via `fifo`, which is one of the classical IPC mechanism. The data in between the pairs are preprocessed by the huffman coding and the ASCII-Byte conversion. Specifcially, the `writer` program accepts an user input and transmits the encoded input in raw bytes to the `reader` program, which converts the inputs to ASCII character array, decodes them and prints the postprocessed data to stdout. Corner test cases are covered by enumearing different possibile user inputs such as ridiculously long string or empty string with the carrige return.
