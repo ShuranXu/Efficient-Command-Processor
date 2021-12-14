@@ -2,7 +2,7 @@
  * @file uart.h
  * @author Shuran Xu (shxu6388@colorado.edu)
  * @brief - header for the UART implementation.
- * @date 2021-11-07
+ * @date 2021-12-13
  */
 
 #ifndef __UART_H_

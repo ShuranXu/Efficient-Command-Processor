@@ -5,7 +5,7 @@
  * with interrupts and provides interfaces for
  * resetting the timer and retrieving time information.
  * @version 0.1
- * @date 2021-10-10
+ * @date 2021-12-13
  *
  * @copyright Copyright (c) 2021
  *

@@ -4,7 +4,7 @@
  * @brief - implements the init funciton, the ISR as well as of the UART
  * peripheral. In addition, two system calls are overwritten to redirect
  * the data to UART.
- * @date 2021-11-07
+ * @date 2021-12-13
  * @Reference: the UART0 interrupt handler implementation is based upon
  * the example code provided on the lecture 20.
  */
