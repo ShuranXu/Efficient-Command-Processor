@@ -2,14 +2,22 @@
 #include <stdint.h>
 #include <string.h>
 #include "huffman_table.h"
+#include "ascii_binary_conv.h"
 #include "huffman.h"
 #include "MKL25Z4.h"
 
 #define COMMON_BUFF_SIZE        (32)
 
+/**
+ * @brief local helpr function to find all indice of the
+ * huffman table entries whose bitnum match the input bitnum.
+ * @param bitnum: the number of bits in interest
+ * @param buff: the array that holds the indice found
+ * @return int: the total number of indice found.
+ */
 static int find_table_index_based_on_bitnum(int bitnum, int *buff)
 {
-    huffman_code_t *htp = HUFFMAN_TABLE;
+    huffman_code_t *htp = (huffman_code_t *)HUFFMAN_TABLE;
     int *bufp = buff;
     int size = 0;
     while(htp->bits){
@@ -23,9 +31,14 @@ static int find_table_index_based_on_bitnum(int bitnum, int *buff)
     return size;
 }
 
+/**
+ * @brief decode the encoded message using the huffman table.
+ * @param s: the message to be encoded.
+ * @param buf: the buffer used to store the encoded characters.
+ */
 void decode_message(const char *s, char *buf)
 {
-    char *p = s;
+    char *p = (char *)s;
     char code[COMMON_BUFF_SIZE];
     int indices[COMMON_BUFF_SIZE];
     char *bufp = buf;
@@ -60,11 +73,19 @@ void decode_message(const char *s, char *buf)
     }
 }
 
+/**
+ * @brief encode the message using the huffman table.
+ * @param s: the message to be encoded.
+ * @param buf: the buffer used to store the encoded characters.
+ * @param buf_size: the capacity of buf.
+ * @return int: return 0 if success;return the number of bits
+ * that buf at least needs if failure.
+ */
 int encode_message(const char *s, char *buf, int buf_size)
 {
-    char *p = s;
+	char *p = (char *)s;
     char *bufp = buf;
-    huffman_code_t *htp = HUFFMAN_TABLE;
+    huffman_code_t *htp = (huffman_code_t *)HUFFMAN_TABLE;
 
     while(*p){
         while(htp){
@@ -80,16 +101,21 @@ int encode_message(const char *s, char *buf, int buf_size)
             htp++;
         }
         //reset htp
-        htp = HUFFMAN_TABLE;
+        htp = (huffman_code_t *) HUFFMAN_TABLE;
         p++;
     }
     return 0;
 }
 
+/**
+ * @brief print the message with the huffman encoding and ASCII-Byte
+ * conversion to maxmimize the system throughput.
+ * @param str: the message to be printed.
+ */
 void huffman_print(const char *str)
 {
-	uint8_t wbuf[512];
-    uint8_t data[64];
+	char wbuf[512];
+	uint8_t data[64];
     int data_written;
     int res;
 
@@ -105,6 +131,7 @@ void huffman_print(const char *str)
 	/* convert the ascii code to raw bytes */
 	data_written = ascii_to_bytes(wbuf, strlen(wbuf), \
 	data, sizeof(data));
+
 	// append PERIOD_MARK_BYTE to data
 	data[++data_written] = PERIOD_MARK_BYTE;
 	//increment data_written

@@ -16,6 +16,7 @@
 #include "common.h"
 #include "dsp.h"
 #include "tsi.h"
+#include "dma.h"
 
 
 #define MAX_TONE_FREQ 			(1000)
@@ -174,6 +175,12 @@ void handle_help()
 	HUFF_PRINT("END");
 }
 
+/**
+ * @brief local helper function to play the tone frequency in the
+ * specified duration in seconds.
+ * @param freq: the tone frequency
+ * @param duration: the duration in seconds
+ */
 static void play_tone(int freq, int duration)
 {
 	//update the tone buffer based on the frequency
@@ -189,6 +196,13 @@ static void play_tone(int freq, int duration)
 	}
 }
 
+/**
+ * @brief PLay the tone at the specified frequency.
+ * @param argc the total number of arguments combined
+ * with the function name
+ * @param argv the array of arguments, which include
+ * source address and the length
+ */
 void handle_tone(int argc,char *argv[])
 {
 	int freq;
@@ -217,12 +231,19 @@ void handle_tone(int argc,char *argv[])
 	HUFF_PRINT("END");
 }
 
-
+/**
+ * @brief PLay the tone at the specified frequency.
+ * @param argc the total number of arguments combined
+ * with the function name
+ * @param argv the array of arguments, which include
+ * source address and the length
+ */
 void handle_tsi(int argc,char *argv[])
 {
 	uint8_t slider_pos;
 	int freq;
 	int duration;
+	int while_loop_cond = 1;
 	uint32_t initial_timestamp = now();
 
 	if(argc < 2){
@@ -231,6 +252,9 @@ void handle_tsi(int argc,char *argv[])
 	else{
 		duration = atoi(argv[1]);
 	}
+
+	HUFF_PRINT("Please input TSI value\r\n");
+
 	/* reset the timer */
 	reset_timer();
 
@@ -244,9 +268,12 @@ void handle_tsi(int argc,char *argv[])
 		/* play the tone at the associated frequency */
 		if(freq){
 			play_tone(freq, 1);
+			while_loop_cond = get_elapsed_time(initial_timestamp) < (duration * ONE_SECOND_TICKS);
+			if(while_loop_cond)
+				HUFF_PRINT("Please input TSI value\r\n");
 		}
 
-	}while(get_elapsed_time(initial_timestamp) < (duration * ONE_SECOND_TICKS));
+	}while(while_loop_cond);
 
 	HUFF_PRINT("END");
 }

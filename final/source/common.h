@@ -19,11 +19,5 @@
 
 #define HUFF_PRINT 						huffman_print
 
-/**
- * @brief delay in milliseconds
- * @param milliseconds: the target time interval for delay
- */
-void delay_ms(int milliseconds);
-
 
 #endif

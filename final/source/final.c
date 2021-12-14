@@ -42,7 +42,6 @@
 #include <stdint.h>
 #include "uart.h"
 #include "cmd_proc.h"
-#include "cbfifo_test.h"
 #include <stdio.h>
 #include "huffman.h"
 #include "fp_sin.h"
@@ -52,7 +51,6 @@
 #include "common.h"
 #include "timer.h"
 #include "tsi.h"
-/* TODO: insert other definitions and declarations here. */
 
 /*
  * @brief   Application entry point.
@@ -62,10 +60,6 @@ int main(void) {
     /* Init board hardware. */    BOARD_InitBootPins();
     BOARD_InitBootClocks();
     BOARD_InitBootPeripherals();
-//#ifndef BOARD_INIT_DEBUG_CONSOLE_PERIPHERAL
-//    /* Init FSL debug console. */
-//    BOARD_InitDebugConsole();
-//#endif
 
 	/* initialize Timer */
 	systick_init();
@@ -86,7 +80,6 @@ int main(void) {
 	/* enable TPM0 and TPM1 */
 	TPM0_init();
 	TPM1_init();
-
 	//run the command processor
 	command_processor();
 

@@ -99,10 +99,15 @@ static void process_cmd(char *cmd_buff)
 	return;
 }
 
-static void receive_command(uint8_t *cmd, int cmd_size)
+/**
+ * @brief receive the command.
+ * @param cmd: array holding the commnd
+ * @param cmd_size: the capacity of the cmd array.
+ */
+static void receive_command(char *cmd, int cmd_size)
 {
 	int idx = 0;
-	uint8_t rbuf[CMD_BUF_CAPACITY << 2];
+	char rbuf[CMD_BUF_CAPACITY << 2];
 	uint8_t data[CMD_BUF_CAPACITY];
 	memset(rbuf, 0, sizeof(rbuf));
 	memset(data, 0, sizeof(data));
@@ -139,7 +144,7 @@ static void receive_command(uint8_t *cmd, int cmd_size)
  */
 void command_processor()
 {
-	uint8_t cmd_buffer[CMD_BUF_CAPACITY];
+	char cmd_buffer[CMD_BUF_CAPACITY];
 
 	do{
 		memset(cmd_buffer,0,CMD_BUF_CAPACITY);
@@ -148,40 +153,4 @@ void command_processor()
 
 	}while(1);
 }
-
-//void command_processor()
-//{
-//	uint8_t cmd_buffer[CMD_BUF_CAPACITY];
-//	memset(cmd_buffer,0,CMD_BUF_CAPACITY);
-//	int cmd_buf_index = 0;
-//	uint8_t character;
-//
-//	printf("? ");
-//	while(1) {
-//
-//		character = getchar();
-//		if(character != 0xFF){
-//
-//			if(character == '\b'){
-//				cmd_buf_index--;
-//				cmd_buffer[cmd_buf_index] = '\0';
-//				printf("\b \b");
-//			}
-//			else{
-//				if(character == '\r'){
-//					cmd_buf_index = 0; //reset the index
-//					process_cmd((char *)cmd_buffer);
-//					memset(cmd_buffer,0,CMD_BUF_CAPACITY);
-//					printf("\r\n? ");
-//				}
-//				else{
-//					cmd_buffer[cmd_buf_index++] = character;
-//					printf("%c",character);
-//				}
-//			}
-//		}
-//	}
-//
-//	return;
-//}
 

@@ -7,6 +7,8 @@
 #include "timer.h"
 #include "handlers.h"
 #include "dma.h"
+#include <string.h>
+#include <stdio.h>
 
 // local macro for fundamental period calculation
 #define ADC_SAMPLE_FREQ				(96000)
@@ -116,7 +118,6 @@ int32_t ADC_calibrate()
  * @brief Poll ADC0 for sampled data and store
  * the sampled data into the sample buffer
  */
-
 int ADC0_poll()
 {
 	while(buffer_iter < TONE_BUFFER_LENGTH) {
@@ -150,12 +151,6 @@ int audio_analysis()
 	buffer_iter = 0;
 
 	if(fund_period < 0){
-		memset(sample_buffer, 0, buffer_iter);
-		buffer_iter = 0;
-		char msg[32];
-		memset(msg,0,sizeof(msg));
-		sprintf(msg,"Error fund_period is -1\r\n");
-		HUFF_PRINT(msg);
 		return -1;
 	}
 

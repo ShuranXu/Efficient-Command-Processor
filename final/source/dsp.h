@@ -27,7 +27,10 @@ int32_t ADC_calibrate();
  */
 int audio_analysis();
 
-
+/**
+ * @brief Poll ADC0 for sampled data and store
+ * the sampled data into the sample buffer
+ */
 int ADC0_poll();
 
 

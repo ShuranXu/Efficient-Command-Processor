@@ -39,12 +39,20 @@ void handle_info();
 void handle_help();
 
 /**
- * @brief PLay the tone at the specified frequency
+ * @brief PLay the tone at the specified frequency.
+ * @param argc the total number of arguments combined
+ * with the function name
+ * @param argv the array of arguments, which include
+ * source address and the length
  */
 void handle_tone(int argc,char *argv[]);
 
 /**
- * @brief PLay the tone at the frequency determined by the TSI touch
+ * @brief PLay the tone at the frequency determined by the TSI touch.
+ * @param argc the total number of arguments combined
+ * with the function name
+ * @param argv the array of arguments, which include
+ * source address and the length
  */
 void handle_tsi(int argc,char *argv[]);
 

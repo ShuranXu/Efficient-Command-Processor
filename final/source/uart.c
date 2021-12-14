@@ -93,7 +93,7 @@ void uart0_init()
 	/* Enable UART transmitter */
 	MODIFY_FIELD(UART0->C2, UART0_C2_TE, 1);
 	/* Clear the UART RDRF flag */
-	uint8_t temp = UART0->D;
+//	uint8_t temp = UART0->D;
 	MODIFY_FIELD(UART0->S1, UART0_S1_TDRE, 1);
 
 	/* Configure the corresponding NVIC attributes */

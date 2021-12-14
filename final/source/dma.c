@@ -1,4 +1,5 @@
 #include <tone.h>
+#include <string.h>
 #include "dma.h"
 #include "fp_sin.h"
 #include "MKL25Z4.h"
@@ -52,6 +53,12 @@ void DMA0_init()
 	NVIC_EnableIRQ(DMA0_IRQn);
 }
 
+/**
+ * @brief Configure DMA0 based on teh samples and cycles required.
+ * @param src: array holding samples
+ * @param sample_mnt: the total sample amount
+ * @param dma_cycles: the number of DMA cycles required
+ */
 void Configure_DMA_Playback(uint16_t *src, int sample_mnt, uint32_t dma_cycles)
 {
 	DMA_cycles = dma_cycles;
@@ -64,7 +71,6 @@ void Configure_DMA_Playback(uint16_t *src, int sample_mnt, uint32_t dma_cycles)
 	DMA0->DMA[0].DAR = DMA_DAR_DAR((uint32_t) (&(DAC0->DAT[0])));
 
 	// byte count
-//	DMA0->DMA[0].DSR_BCR = DMA_DSR_BCR_BCR(sample_amount * 2);
 	DMA0->DMA[0].DSR_BCR = DMA_DSR_BCR_BCR(sample_amount);
 
 	// enable a source without periodic triggering
@@ -84,12 +90,16 @@ static void Start_DMA_Playback()
 	DMA0->DMA[0].DAR = DMA_DAR_DAR((uint32_t) (&(DAC0->DAT[0])));
 
 	// byte count
-//	DMA0->DMA[0].DSR_BCR = DMA_DSR_BCR_BCR(sample_amount * 2);
 	DMA0->DMA[0].DSR_BCR = DMA_DSR_BCR_BCR(sample_amount);
 	// set enable flag
 	DMAMUX0->CHCFG[0] |= DMAMUX_CHCFG_ENBL_MASK;
 }
 
+/**
+ * @brief testing if the DMA is performing the
+ * transactions.
+ * @return int: return 1 if running; return 0 if not.
+ */
 int is_DMA_running()
 {
 	return dma_action;
@@ -99,7 +109,6 @@ int is_DMA_running()
  * @brief Overwrite the default handler and reconfigure DMA
  * engine for the next DMA request issued by TPM0
  */
-
 void DMA0_IRQHandler(void)
 {
 	/* clear all bits */

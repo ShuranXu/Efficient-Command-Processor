@@ -93,9 +93,7 @@ uint8_t read_slider_distance()
 		positions[0] = (tsiCntDelta[0]* SLIDER_LENGTH)/delta_sum;
 		positions[1] = (tsiCntDelta[1]* SLIDER_LENGTH)/delta_sum;
 		slider_dist = ((SLIDER_LENGTH - positions[0]) + positions[1])/2;
-//#ifdef DEBUG
-//		PRINTF("\r\n SLIDER VALUE %u", slider_dist);
-//#endif
+
 		return slider_dist;
 	}
 	return 0;
@@ -125,11 +123,6 @@ void poll_and_handle_tsi()
 		curr_channel = (TOTAL_TSI_ELECTRODES - 1) - curr_channel;
 		restart_tsi();
 	}
-
-//#ifdef DEBUG
-//		PRINTF("\r\n SLIDER DELTA[0] = %u", tsiCntDelta[0]);
-//		PRINTF("\r\n SLIDER DELTA[1] = %u", tsiCntDelta[1]);
-//#endif
 
 	return;
 }
