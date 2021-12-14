@@ -45,11 +45,11 @@ int main()
     // mkfifo(<pathname>, <permission>)
     mkfifo(myfifo, 0666);
 
-    uint8_t cmd[32];
-    uint8_t reply[32];
-    uint8_t wbuf[128];
-    uint8_t rbuf[128];
-    uint8_t data[32];
+    uint8_t cmd[64];
+    uint8_t rbuf[512];
+    uint8_t data[128];
+    uint8_t reply[128];
+    uint8_t wbuf[512];
     int data_written;
     uint8_t c;
     int read_len;

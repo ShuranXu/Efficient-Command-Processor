@@ -120,6 +120,8 @@ Here are the screenshots to illustrate the communication process:
 
 As can be seen above, the user inputs from the writter side are transferred to the reader side, and vice versa. Besides, when the user types `quit` , both programs will gracefully terminate.
 
+__The IPC programs are used primarily for manual test for different combination of test scenario. It is essentially ad-hoc test where users/developers tests as many corner test cases as possible in the given execution environment. As such, there is no particular outline to follow for such testing, random user inputs should suffice the testing. Please do note that there is a upper limit in terms of the string to be transferred since the input buffer is statically allocated in global memory region rather than the dynamic allocation scheme, so ridculously large string is unacceptable and might crash the program. Typically up to 32 bytes of input should be good enough.__
+
 _Note: `Makefile` is written to automate the build process._
 
 - cbfifo

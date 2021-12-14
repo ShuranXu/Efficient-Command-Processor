@@ -52,11 +52,11 @@ int main()
     mkfifo(myfifo, 0666);
 
     uint8_t c;
-    uint8_t cmd[32];
-    uint8_t rbuf[128];
-    uint8_t data[64];
-    uint8_t reply[32];
-    uint8_t wbuf[128];
+    uint8_t cmd[64];
+    uint8_t rbuf[512];
+    uint8_t data[128];
+    uint8_t reply[128];
+    uint8_t wbuf[512];
 
     int read_len;
     int idx = 0;
