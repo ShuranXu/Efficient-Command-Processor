@@ -116,7 +116,7 @@ Here are the screenshots to illustrate the communication process:
 
 | Writer             |  Reader |
 |-------------------------|-------------------------|
-| <img src="./images/sc-writer.png" width="550" height="300">  | <img src="./images/sc-reader.png" width="600" height="400"> |
+| <img src="./images/sc-writer.png" width="650" height="300">  | <img src="./images/sc-reader.png" width="650" height="400"> |
 
 As can be seen above, the user inputs from the writter side are transferred to the reader side, and vice versa. Besides, when the user types `quit` , both programs will gracefully terminate.
 
