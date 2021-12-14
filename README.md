@@ -81,6 +81,20 @@ To correctly detect the end of the tranmssion for each message, special characte
 
 The essence of the conversion is to represent each bit in the huffman code as one char value stored in a char array. For bit streams which are not multiple of 8, bit 0 will be appended at the least significant bit position. For example, bitstream `110001` will be appended to be `11000100` which represents byte `0x84`. 
 
+APIs are defined as follows intuitively:
+```
+void ascii_to_byte(char *buf, int bufsize, uint8_t *byte);
+
+void byte_to_ascii(char *buf, uint8_t byte);
+
+int ascii_to_bytes(const char *ascii_str, int ascii_str_size, \
+uint8_t *bytes, int bytes_size);
+
+int bytes_to_ascii(char *ascii_str, int ascii_str_size, \
+uint8_t *bytes, int bytes_size);
+```
+
+
 - TSI command 
 
 The TSI polling is used in conjuction with the ADC as well as DMA. Specifically, the TSI is polled first to read the current slider length that the user has just reached. Upon the conversion of the length to the tone frequency, the DMA0 is configured for DMA transactions. TPM0 triggers the transactions whenever it is timed out and the ADC0 samples the data and reports the estimated tone frequency. 
