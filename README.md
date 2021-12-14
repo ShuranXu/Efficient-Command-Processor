@@ -128,12 +128,12 @@ The given cbfifo test is included as part of the program and ran at the device b
 
 ## Q&A
 
-_Q:Does the project show your mastery of embedded software development?_
+_Q:Does the project show your mastery of embedded software development?_ </br>
 A: I think the project demonstrates my mastery of the ESD as a not only numerous features, which are smoothly linked together to show the program flow, are supported by the program but also highly-efficient communication scheme is also achieved between the host and the device. 
 
-_Q:Testing: How did you prove that your code is correct? Consider automated tests, writing a test plan, or other possible approaches. Did you cover the “happy case” functionality? What about error cases and corner cases?_
+_Q:Testing: How did you prove that your code is correct? Consider automated tests, writing a test plan, or other possible approaches. Did you cover the “happy case” functionality? What about error cases and corner cases?_ </br>
 A: The `test plan` section shall answer the questions here. Automated tests such as the CUnit test are written, code is proven to be correct by both CUnit unit tests and IPC tests. "Happy case" functionally are covered definitely and corner cases are also considered and particularly tested in the IPC test, which requires user's inputs. So such test is performed in ad-hoc manner.
 
-_Q:Does the project as submitted match the functionality outlined in your November 16 proposal?_
+_Q:Does the project as submitted match the functionality outlined in your November 16 proposal?_ </br>
 A: The project basically matches all the functionality outlined in the project proposal, what is missing is the hardware circuit for speaker playing. Ideally, a analog circuit built with resistor and a speaker on a breadboard to play the tone via the speaker should be built, but all the necessary dev kits were returned to school for my another course. So the lack of components makes me unable to build such circuit. Other than this, all software components are covered and tested.
 
