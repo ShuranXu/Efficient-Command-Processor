@@ -124,7 +124,9 @@ _Note: `Makefile` is written to automate the build process._
 
 - cbfifo
 
-The given cbfifo test is included as part of test programs, but they need to be executed as separate programs.
+The given cbfifo test is included as part of test programs, but they need to be executed as separate programs. The test passes and can be seen here:
+
+<img src="./images/sc-cbfifo-test.png" width="700" height="250">
 
 ## Q&A
 
