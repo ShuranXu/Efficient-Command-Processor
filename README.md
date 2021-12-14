@@ -124,7 +124,7 @@ _Note: `Makefile` is written to automate the build process._
 
 - cbfifo
 
-The given cbfifo test is included as part of the program and ran at the device boots up. 
+The given cbfifo test is included as part of test programs, but they need to be executed as separate programs.
 
 ## Q&A
 

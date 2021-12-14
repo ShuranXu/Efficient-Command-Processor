@@ -2,16 +2,15 @@ CC=gcc
 CFLAGS= -g -I.
 DEPS = huffman_table.h
 OBJ = serial.o huffman.o terminal.o ascii_binary_conv.o
-RAWOBJ = serial.o raw_terminal.o
+FFTOBJ = cbfifo_test.o cbfifo.o 
 
 %.o: %.c $(DEPS)
 	$(CC) -c -o $@ $< $(CFLAGS)
 
 terminal: $(OBJ)
 	$(CC) -o $@ $^ $(CFLAGS) 
-
-raw_terminal: $(RAWOBJ)
+cbfifo_test: $(FFTOBJ)
 	$(CC) -o $@ $^ $(CFLAGS) 
 
 clean:
-	rm terminal *.o 
+	rm terminal cbfifo_test *.o 
